@@ -9,10 +9,14 @@ type ThemeState = {
 }
 
 const systemTheme = (): Theme =>
-  window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
 
 const applyTheme = (theme: Theme) => {
-  document.documentElement.dataset.theme = theme
+  if (typeof document !== 'undefined') {
+    document.documentElement.dataset.theme = theme
+  }
 }
 
 export const useTheme = create<ThemeState>()(
