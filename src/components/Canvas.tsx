@@ -11,6 +11,7 @@ import type { IsValidConnection } from '@xyflow/react'
 import { BLOCK_TYPES } from '../config/blockTypes'
 import { computeBudgets } from '../lib/budget'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
+import { useTheme } from '../store/useTheme'
 import type { BlockKind, FundNode as FundNodeType, MoneyEdge as MoneyEdgeType } from '../types'
 import { BudgetContext } from './BudgetContext'
 import { FundNode } from './FundNode'
@@ -20,6 +21,9 @@ import { SummaryBar } from './SummaryBar'
 const nodeTypes = { fund: FundNode }
 const edgeTypes = { money: MoneyEdge }
 
+const DOTS_LIGHT = '#c9cede'
+const DOTS_DARK = '#2c344a'
+
 const isValidConnection: IsValidConnection<MoneyEdgeType> = (c) => c.source !== c.target
 
 export function Canvas() {
@@ -28,6 +32,7 @@ export function Canvas() {
   const onEdgesChange = useFlowStore((s) => s.onEdgesChange)
   const onConnect = useFlowStore((s) => s.onConnect)
   const addNode = useFlowStore((s) => s.addNode)
+  const theme = useTheme((s) => s.theme)
   const { screenToFlowPosition } = useReactFlow()
 
   const budgets = useMemo(() => computeBudgets(chart.nodes, chart.edges), [chart.nodes, chart.edges])
@@ -62,16 +67,22 @@ export function Canvas() {
           isValidConnection={isValidConnection}
           connectionLineStyle={{ stroke: '#f59e0b', strokeWidth: 3, strokeDasharray: '8 5' }}
           deleteKeyCode={['Backspace', 'Delete']}
+          colorMode={theme}
           fitView
           minZoom={0.2}
           proOptions={{ hideAttribution: true }}
         >
-          <Background variant={BackgroundVariant.Dots} gap={22} size={1.6} color="#c9cede" />
+          <Background
+            variant={BackgroundVariant.Dots}
+            gap={22}
+            size={1.6}
+            color={theme === 'dark' ? DOTS_DARK : DOTS_LIGHT}
+          />
           <MiniMap
             pannable
             zoomable
             nodeColor={(n) => BLOCK_TYPES[(n as FundNodeType).data.kind].color}
-            nodeBorderRadius={12}
+            nodeBorderRadius={0}
           />
           <Controls showInteractive={false} />
         </ReactFlow>

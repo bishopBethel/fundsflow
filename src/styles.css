@@ -1,18 +1,69 @@
 :root {
+  color-scheme: light;
   --bg: #f6f7fb;
   --panel: #ffffff;
+  --hover-bg: #f1f3f9;
+  --input-bg: #ffffff;
   --ink: #1e2436;
   --ink-soft: #6b7390;
   --line: #e4e7f0;
+  --dash-line: #c9cede;
   --accent: #f59e0b;
-  --radius: 14px;
+  --btn-hover-bg: #fffbeb;
+  --btn-hover-line: #fcd34d;
   --shadow: 0 2px 10px rgba(30, 36, 54, 0.08);
+  --shadow-lift: 0 6px 14px rgba(30, 36, 54, 0.12);
+  --brand-a: #16a34a;
+  --brand-b: #2563eb;
+  --danger: #dc2626;
+  --chip-in-bg: #dcfce7;
+  --chip-in-ink: #15803d;
+  --chip-out-bg: #ffedd5;
+  --chip-out-ink: #c2410c;
+  --chip-left-bg: #e0e7ff;
+  --chip-left-ink: #4338ca;
+  --chip-neg-bg: #fee2e2;
+  --chip-neg-ink: #dc2626;
   font-family: ui-rounded, 'SF Pro Rounded', -apple-system, 'Segoe UI', system-ui, sans-serif;
   color: var(--ink);
 }
 
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0d1017;
+  --panel: #171c27;
+  --hover-bg: #222836;
+  --input-bg: #10141d;
+  --ink: #e7eaf3;
+  --ink-soft: #949dba;
+  --line: #2a3142;
+  --dash-line: #39415a;
+  --btn-hover-bg: #2a2213;
+  --btn-hover-line: #a16207;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --shadow-lift: 0 6px 14px rgba(0, 0, 0, 0.6);
+  --brand-a: #4ade80;
+  --brand-b: #60a5fa;
+  --danger: #f87171;
+  --chip-in-bg: #10321f;
+  --chip-in-ink: #4ade80;
+  --chip-out-bg: #35210d;
+  --chip-out-ink: #fb923c;
+  --chip-left-bg: #1e2145;
+  --chip-left-ink: #a5b4fc;
+  --chip-neg-bg: #3a1418;
+  --chip-neg-ink: #f87171;
+}
+
 * {
   box-sizing: border-box;
+}
+
+/* Sharp edges everywhere — also overrides React Flow's own rounded corners. */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
 }
 
 html,
@@ -61,7 +112,7 @@ body,
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -0.02em;
-  background: linear-gradient(120deg, #16a34a, #2563eb);
+  background: linear-gradient(120deg, var(--brand-a), var(--brand-b));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -73,7 +124,6 @@ body,
   font-size: 15px;
   color: var(--ink);
   border: 2px solid transparent;
-  border-radius: 10px;
   padding: 6px 10px;
   background: transparent;
   min-width: 0;
@@ -82,20 +132,19 @@ body,
 }
 
 .chart-name:hover {
-  background: var(--bg);
+  background: var(--hover-bg);
 }
 
 .chart-name:focus {
   outline: none;
   border-color: var(--accent);
-  background: #fff;
+  background: var(--input-bg);
 }
 
 .chart-switcher {
   font: inherit;
   font-size: 13px;
   padding: 7px 10px;
-  border-radius: 10px;
   border: 1px solid var(--line);
   background: var(--panel);
   color: var(--ink-soft);
@@ -114,7 +163,6 @@ body,
   font-size: 13px;
   font-weight: 600;
   padding: 7px 11px;
-  border-radius: 10px;
   border: 1px solid var(--line);
   background: var(--panel);
   color: var(--ink);
@@ -123,8 +171,8 @@ body,
 }
 
 .toolbar-actions button:hover {
-  background: #fffbeb;
-  border-color: #fcd34d;
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-line);
   transform: translateY(-1px);
   box-shadow: var(--shadow);
 }
@@ -193,7 +241,6 @@ body,
   align-items: center;
   gap: 10px;
   padding: 9px 10px;
-  border-radius: 12px;
   background: var(--block-soft);
   border: 2px solid transparent;
   cursor: grab;
@@ -204,7 +251,7 @@ body,
 .palette-card:hover {
   transform: translateY(-2px) rotate(-0.6deg);
   border-color: var(--block-color);
-  box-shadow: 0 6px 14px rgba(30, 36, 54, 0.12);
+  box-shadow: var(--shadow-lift);
 }
 
 .palette-card:active {
@@ -234,14 +281,8 @@ body,
   background: var(--bg);
 }
 
-.react-flow__controls {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
+.react-flow__controls,
 .react-flow__minimap {
-  border-radius: 12px;
   overflow: hidden;
   box-shadow: var(--shadow);
 }
@@ -252,7 +293,6 @@ body,
   width: 244px;
   background: var(--panel);
   border: 2.5px solid var(--block-color);
-  border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 10px 12px 12px;
   animation: node-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -261,7 +301,7 @@ body,
 
 .fund-node.selected {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--block-color) 30%, transparent),
-    0 6px 16px rgba(30, 36, 54, 0.14);
+    var(--shadow-lift);
 }
 
 @keyframes node-pop {
@@ -296,7 +336,6 @@ body,
   font-size: 11px;
   font-weight: 800;
   padding: 3px 8px;
-  border-radius: 999px;
   box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
 }
 
@@ -313,7 +352,6 @@ body,
   display: grid;
   place-items: center;
   background: var(--block-soft);
-  border-radius: 12px;
   flex-shrink: 0;
 }
 
@@ -331,17 +369,16 @@ body,
   border: none;
   background: transparent;
   padding: 1px 2px;
-  border-radius: 6px;
   width: 100%;
 }
 
 .fund-node-name:hover {
-  background: var(--bg);
+  background: var(--hover-bg);
 }
 
 .fund-node-name:focus {
   outline: 2px solid var(--block-color);
-  background: #fff;
+  background: var(--input-bg);
 }
 
 .fund-node-type {
@@ -373,9 +410,8 @@ body,
   font-weight: 700;
   color: var(--ink);
   border: 1.5px solid var(--line);
-  border-radius: 8px;
   padding: 4px 8px;
-  background: #fff;
+  background: var(--input-bg);
 }
 
 .money-input:focus {
@@ -393,41 +429,50 @@ body,
   font-size: 10.5px;
   font-weight: 700;
   padding: 3px 7px;
-  border-radius: 999px;
   white-space: nowrap;
 }
 
 .chip-in {
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--chip-in-bg);
+  color: var(--chip-in-ink);
 }
 
 .chip-out {
-  background: #ffedd5;
-  color: #c2410c;
+  background: var(--chip-out-bg);
+  color: var(--chip-out-ink);
 }
 
 .chip-left {
-  background: #e0e7ff;
-  color: #4338ca;
+  background: var(--chip-left-bg);
+  color: var(--chip-left-ink);
 }
 
 .chip-neg {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--chip-neg-bg);
+  color: var(--chip-neg-ink);
 }
 
 .flow-handle {
   width: 13px;
   height: 13px;
   background: var(--block-color);
-  border: 2.5px solid #fff;
-  box-shadow: 0 1px 4px rgba(30, 36, 54, 0.3);
+  border: 2.5px solid var(--panel);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   transition: transform 0.12s;
 }
 
 .flow-handle:hover {
   transform: scale(1.35);
+}
+
+/* Block pastels are light-mode swatches; dark mode tints the hue over the panel. */
+:root[data-theme='dark'] .palette-card,
+:root[data-theme='dark'] .fund-node-emoji {
+  background: color-mix(in srgb, var(--block-color) 48%, var(--panel));
+}
+
+:root[data-theme='dark'] .palette-card {
+  border-color: color-mix(in srgb, var(--block-color) 60%, var(--panel));
 }
 
 /* ---------- money edge ---------- */
@@ -458,13 +503,12 @@ body,
   position: absolute;
   transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px));
   pointer-events: all;
-  background: #fff;
+  background: var(--panel);
   border: 2px solid var(--edge-color);
   color: var(--ink);
   font-size: 12px;
   font-weight: 800;
   padding: 3px 9px;
-  border-radius: 999px;
   cursor: pointer;
   box-shadow: var(--shadow);
   transition: transform 0.12s;
@@ -491,6 +535,7 @@ body,
   padding: 0;
   font-size: 12px;
   text-align: center;
+  background: transparent;
 }
 
 .edge-label .money-input:focus {
@@ -512,9 +557,8 @@ body,
   text-align: center;
   max-width: 380px;
   padding: 28px 32px;
-  background: color-mix(in srgb, #fff 82%, transparent);
-  border: 2px dashed #c9cede;
-  border-radius: 20px;
+  background: color-mix(in srgb, var(--panel) 82%, transparent);
+  border: 2px dashed var(--dash-line);
   backdrop-filter: blur(2px);
 }
 
@@ -553,7 +597,6 @@ body,
   align-items: center;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 999px;
   padding: 8px 20px;
   box-shadow: var(--shadow);
   font-size: 12.5px;
@@ -568,6 +611,6 @@ body,
 }
 
 .summary-warn {
-  color: #dc2626;
+  color: var(--danger);
   font-weight: 700;
 }

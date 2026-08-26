@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { exportPng } from '../lib/exportPng'
 import { sampleEdges, sampleNodes } from '../lib/sampleFlow'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
+import { useTheme } from '../store/useTheme'
 import type { FundNode, MoneyEdge } from '../types'
 
 export function Toolbar() {
@@ -9,6 +10,8 @@ export function Toolbar() {
   const charts = useFlowStore((s) => s.charts)
   const { newChart, renameChart, switchChart, deleteChart, loadChartData } = useFlowStore()
   const fileRef = useRef<HTMLInputElement>(null)
+  const theme = useTheme((s) => s.theme)
+  const toggleTheme = useTheme((s) => s.toggleTheme)
 
   const exportJson = () => {
     const blob = new Blob(
@@ -82,6 +85,14 @@ export function Toolbar() {
         <button onClick={exportJson}>⬇️ JSON</button>
         <button onClick={() => fileRef.current?.click()}>⬆️ Import</button>
         <button onClick={() => exportPng(chart.nodes, chart.name)}>📸 PNG</button>
+        <span className="toolbar-divider" />
+        <button
+          onClick={toggleTheme}
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+        </button>
         <input
           ref={fileRef}
           type="file"

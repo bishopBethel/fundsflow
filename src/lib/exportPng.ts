@@ -6,13 +6,16 @@ export async function exportPng(nodes: FundNode[], chartName: string) {
   const viewportEl = document.querySelector<HTMLElement>('.react-flow__viewport')
   if (!viewportEl || nodes.length === 0) return
 
+  const bg =
+    getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#f6f7fb'
+
   const bounds = getNodesBounds(nodes)
   const width = Math.min(3000, Math.max(1024, Math.ceil(bounds.width) + 160))
   const height = Math.min(3000, Math.max(768, Math.ceil(bounds.height) + 160))
   const viewport = getViewportForBounds(bounds, width, height, 0.4, 2, 0.08)
 
   const dataUrl = await toPng(viewportEl, {
-    backgroundColor: '#f6f7fb',
+    backgroundColor: bg,
     width,
     height,
     style: {
