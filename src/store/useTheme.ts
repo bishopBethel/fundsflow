@@ -24,15 +24,18 @@ const noopStorage: StateStorage = {
   removeItem: () => {},
 }
 
-// Node exposes a method-less `localStorage` stub, and browsers with site data
-// blocked throw on access, so probe for the methods rather than the global.
+// Node ships a method-less stub and blocked site data throws on write, so probe
+// with a real round-trip rather than trusting the global to exist.
 const webStorage = (): StateStorage => {
   try {
-    if (typeof localStorage !== 'undefined' && typeof localStorage.setItem === 'function') {
+    if (typeof localStorage !== 'undefined') {
+      const probeKey = '__fundsflow_probe__'
+      localStorage.setItem(probeKey, probeKey)
+      localStorage.removeItem(probeKey)
       return localStorage
     }
   } catch {
-    /* blocked */
+    /* unavailable */
   }
   return noopStorage
 }

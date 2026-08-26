@@ -61,7 +61,7 @@
 
 /* Sharp edges everywhere. :where() keeps the app-wide reset at zero specificity so
    any class can opt out; .react-flow * matches the library's own class-level radii. */
-:where(#root, #root *, #root *::before, #root *::after),
+:where(*, *::before, *::after),
 .react-flow * {
   border-radius: 0;
 }
