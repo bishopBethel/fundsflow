@@ -59,11 +59,13 @@
   box-sizing: border-box;
 }
 
-/* Sharp edges everywhere — also overrides React Flow's own rounded corners. */
-*,
-*::before,
-*::after {
-  border-radius: 0 !important;
+/* Sharp edges everywhere. The #root scope outranks React Flow's own class-level
+   radii without !important, so a descendant can still opt out. */
+#root,
+#root *,
+#root *::before,
+#root *::after {
+  border-radius: 0;
 }
 
 html,

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FundsFlow — build your money map</title>
     <script>
+      // Key must match THEME_STORAGE_KEY in src/store/useTheme.ts.
       try {
         var t = JSON.parse(localStorage.getItem('fundsflow-theme') || '{}').state?.theme
         document.documentElement.dataset.theme =
