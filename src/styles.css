@@ -59,12 +59,9 @@
   box-sizing: border-box;
 }
 
-/* Sharp edges everywhere. The #root scope outranks React Flow's own class-level
-   radii without !important, so a descendant can still opt out. */
-#root,
-#root *,
-#root *::before,
-#root *::after {
+/* Sharp edges everywhere. :where() zeroes the specificity so any class selector
+   can opt out; React Flow's own radii are re-flattened at their own specificity. */
+:where(#root, #root *, #root *::before, #root *::after) {
   border-radius: 0;
 }
 
@@ -459,6 +456,7 @@ body,
   height: 13px;
   background: var(--block-color);
   border: 2.5px solid var(--panel);
+  border-radius: 0;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   transition: transform 0.12s;
 }
