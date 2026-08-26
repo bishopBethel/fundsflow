@@ -14,7 +14,9 @@
       "Bash(python3 -c \"import json; d=json.load\\(open\\('export-test.json'\\)\\); print\\(d['name'], len\\(d['nodes']\\), 'nodes', len\\(d['edges']\\), 'edges'\\)\")",
       "Bash(npm run *)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git rm *)",
+      "Bash(git commit *)"
     ]
   }
 }
