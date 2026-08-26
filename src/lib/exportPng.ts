@@ -1,0 +1,29 @@
+import { getNodesBounds, getViewportForBounds } from '@xyflow/react'
+import { toPng } from 'html-to-image'
+import type { FundNode } from '../types'
+
+export async function exportPng(nodes: FundNode[], chartName: string) {
+  const viewportEl = document.querySelector<HTMLElement>('.react-flow__viewport')
+  if (!viewportEl || nodes.length === 0) return
+
+  const bounds = getNodesBounds(nodes)
+  const width = Math.min(3000, Math.max(1024, Math.ceil(bounds.width) + 160))
+  const height = Math.min(3000, Math.max(768, Math.ceil(bounds.height) + 160))
+  const viewport = getViewportForBounds(bounds, width, height, 0.4, 2, 0.08)
+
+  const dataUrl = await toPng(viewportEl, {
+    backgroundColor: '#f6f7fb',
+    width,
+    height,
+    style: {
+      width: `${width}px`,
+      height: `${height}px`,
+      transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
+    },
+  })
+
+  const link = document.createElement('a')
+  link.download = `${chartName.replace(/[^\w-]+/g, '-') || 'fundsflow'}.png`
+  link.href = dataUrl
+  link.click()
+}

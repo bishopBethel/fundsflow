@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(command -v chromium-cli)",
+      "Bash(chromium-cli --session fundsflow)",
+      "Read(//Users/ram/.cache/**)",
+      "Bash(npm ls *)",
+      "Bash(npx --no-install playwright --version)",
+      "Bash(npm init *)",
+      "Bash(npx playwright *)",
+      "Bash(node exports.mjs)",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('export-test.json'\\)\\); print\\(d['name'], len\\(d['nodes']\\), 'nodes', len\\(d['edges']\\), 'edges'\\)\")",
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}
