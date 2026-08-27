@@ -3,7 +3,14 @@ import { persist } from 'zustand/middleware'
 import { addEdge, applyEdgeChanges, applyNodeChanges } from '@xyflow/react'
 import type { Connection, EdgeChange, NodeChange, XYPosition } from '@xyflow/react'
 import { BLOCK_TYPES } from '../config/blockTypes'
-import type { BlockKind, Chart, FundNode, FundNodeData, MoneyEdge } from '../types'
+import type {
+  BlockKind,
+  Chart,
+  FundNode,
+  FundNodeData,
+  MoneyEdge,
+  MoneyEdgeData,
+} from '../types'
 
 type FlowState = {
   charts: Chart[]
@@ -14,6 +21,7 @@ type FlowState = {
   addNode: (kind: BlockKind, position: XYPosition) => void
   updateNodeData: (id: string, patch: Partial<FundNodeData>) => void
   updateEdgeAmount: (id: string, amount: number | null) => void
+  updateEdgeData: (id: string, patch: Partial<MoneyEdgeData>) => void
   newChart: (name?: string) => void
   renameChart: (name: string) => void
   switchChart: (id: string) => void
@@ -78,7 +86,16 @@ export const useFlowStore = create<FlowState>()(
 
         updateEdgeAmount: (id, amount) =>
           patchActive((c) => ({
-            edges: c.edges.map((e) => (e.id === id ? { ...e, data: { amount } } : e)),
+            edges: c.edges.map((e) =>
+              e.id === id ? { ...e, data: { ...e.data, amount } } : e,
+            ),
+          })),
+
+        updateEdgeData: (id, patch) =>
+          patchActive((c) => ({
+            edges: c.edges.map((e) =>
+              e.id === id ? { ...e, data: { amount: null, ...e.data, ...patch } } : e,
+            ),
           })),
 
         newChart: (name) => {
