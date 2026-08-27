@@ -39,15 +39,33 @@ export const MoneyEdge = memo(
     const maxAmount = Math.max(1, ...chart.edges.map((e) => e.data?.amount ?? 0))
     const width = amount == null ? 2 : 2.5 + 6.5 * Math.sqrt(amount / maxAmount)
     const pathId = `money-path-${id}`
+    const markerId = `money-arrow-${id}`
+    const strokeColor = amount == null ? '#94a3b8' : color
+    const arrowSize = 7 + width * 1.6
     // ~2.4s per pass, faster for bigger flows
     const travelDur = amount == null ? 4 : Math.max(1.2, 3 - 1.8 * (amount / maxAmount))
 
     return (
       <>
+        <defs>
+          <marker
+            id={markerId}
+            viewBox="0 0 10 10"
+            refX={9}
+            refY={5}
+            markerWidth={arrowSize}
+            markerHeight={arrowSize}
+            markerUnits="userSpaceOnUse"
+            orient="auto-start-reverse"
+          >
+            <path d="M 0 0 L 10 5 L 0 10 z" fill={strokeColor} stroke="none" />
+          </marker>
+        </defs>
         <BaseEdge
           path={edgePath}
           className={amount == null ? 'money-edge sketch' : 'money-edge live'}
-          style={{ stroke: amount == null ? '#94a3b8' : color, strokeWidth: width }}
+          style={{ stroke: strokeColor, strokeWidth: width }}
+          markerEnd={`url(#${markerId})`}
         />
         {amount != null && (
           <g className="money-traveler">
