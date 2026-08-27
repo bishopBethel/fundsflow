@@ -1,7 +1,7 @@
 import { memo, useState } from 'react'
 import { BaseEdge, EdgeLabelRenderer, getBezierPath } from '@xyflow/react'
 import type { EdgeProps } from '@xyflow/react'
-import { BLOCK_TYPES } from '../config/blockTypes'
+import { edgeVisuals, maxEdgeAmount } from '../lib/edgeStyle'
 import { formatMoney } from '../lib/format'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import type { MoneyEdge as MoneyEdgeType } from '../types'
@@ -33,38 +33,18 @@ export const MoneyEdge = memo(
     const chart = useActiveChart()
 
     const amount = data?.amount ?? null
-    const sourceNode = chart.nodes.find((n) => n.id === source)
-    const color = sourceNode ? BLOCK_TYPES[sourceNode.data.kind].color : '#94a3b8'
-
-    const maxAmount = Math.max(1, ...chart.edges.map((e) => e.data?.amount ?? 0))
-    const width = amount == null ? 2 : 2.5 + 6.5 * Math.sqrt(amount / maxAmount)
+    const maxAmount = maxEdgeAmount(chart.edges)
+    const { color, stroke, width, markerId } = edgeVisuals(source, amount, chart.nodes, maxAmount)
     const pathId = `money-path-${id}`
-    const markerId = `money-arrow-${id}`
-    const strokeColor = amount == null ? '#94a3b8' : color
-    const arrowSize = 7 + width * 1.6
     // ~2.4s per pass, faster for bigger flows
     const travelDur = amount == null ? 4 : Math.max(1.2, 3 - 1.8 * (amount / maxAmount))
 
     return (
       <>
-        <defs>
-          <marker
-            id={markerId}
-            viewBox="0 0 10 10"
-            refX={9}
-            refY={5}
-            markerWidth={arrowSize}
-            markerHeight={arrowSize}
-            markerUnits="userSpaceOnUse"
-            orient="auto-start-reverse"
-          >
-            <path d="M 0 0 L 10 5 L 0 10 z" fill={strokeColor} stroke="none" />
-          </marker>
-        </defs>
         <BaseEdge
           path={edgePath}
           className={amount == null ? 'money-edge sketch' : 'money-edge live'}
-          style={{ stroke: strokeColor, strokeWidth: width }}
+          style={{ stroke, strokeWidth: width }}
           markerEnd={`url(#${markerId})`}
         />
         {amount != null && (

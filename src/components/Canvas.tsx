@@ -13,6 +13,7 @@ import { computeBudgets } from '../lib/budget'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import { useTheme } from '../store/useTheme'
 import type { BlockKind, FundNode as FundNodeType, MoneyEdge as MoneyEdgeType } from '../types'
+import { ArrowDefs } from './ArrowDefs'
 import { BudgetContext } from './BudgetContext'
 import { FundNode } from './FundNode'
 import { MoneyEdge } from './MoneyEdge'
@@ -72,6 +73,7 @@ export function Canvas() {
           minZoom={0.2}
           proOptions={{ hideAttribution: true }}
         >
+          <ArrowDefs nodes={chart.nodes} edges={chart.edges} />
           <Background
             variant={BackgroundVariant.Dots}
             gap={22}

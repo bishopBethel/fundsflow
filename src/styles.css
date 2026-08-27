@@ -499,6 +499,11 @@ body,
   pointer-events: none;
 }
 
+.arrow-defs {
+  position: absolute;
+  pointer-events: none;
+}
+
 .edge-label {
   position: absolute;
   transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px));
