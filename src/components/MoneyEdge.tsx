@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import { Fragment, memo, useEffect, useRef, useState } from 'react'
 import { BaseEdge, EdgeLabelRenderer, getBezierPath } from '@xyflow/react'
 import type { EdgeProps } from '@xyflow/react'
 import {
@@ -9,6 +9,7 @@ import {
   SPENDING_USES,
 } from '../config/fundingTypes'
 import { edgeVisuals, maxEdgeAmount } from '../lib/edgeStyle'
+import { edgeTags } from '../lib/edgeTags'
 import { formatMoney } from '../lib/format'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import type { MoneyEdgeData, MoneyEdge as MoneyEdgeType } from '../types'
@@ -54,7 +55,7 @@ function Picker({
               {options(g.items)}
             </optgroup>
           ) : (
-            options(g.items)
+            <Fragment key="ungrouped">{options(g.items)}</Fragment>
           ),
         )}
       </select>
@@ -109,12 +110,7 @@ export const MoneyEdge = memo(
     const patch = (key: keyof MoneyEdgeData) => (value: string) =>
       updateEdgeData(id, { [key]: value || undefined } as Partial<MoneyEdgeData>)
 
-    const tags = [
-      data?.fundingType && FUNDING_TYPES[data.fundingType],
-      data?.duration && FUNDING_DURATIONS[data.duration],
-      data?.spendingUse && SPENDING_USES[data.spendingUse],
-      data?.spendingRoute && SPENDING_ROUTES[data.spendingRoute],
-    ].filter(Boolean) as Choice[]
+    const tags = edgeTags(data)
 
     const openDetails = (e: React.MouseEvent) => {
       e.stopPropagation()
@@ -172,9 +168,9 @@ export const MoneyEdge = memo(
                 🏷️ type
               </span>
             ) : (
-              tags.map((t) => (
-                <span key={t.id} className="edge-type" title={t.blurb} onClick={openDetails}>
-                  {t.emoji} {t.short}
+              tags.map((tag) => (
+                <span key={tag.key} className="edge-type" title={tag.blurb} onClick={openDetails}>
+                  {tag.emoji} {tag.short}
                 </span>
               ))
             )}
