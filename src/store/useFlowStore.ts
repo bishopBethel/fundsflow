@@ -8,8 +8,8 @@ import type {
   Chart,
   FundNode,
   FundNodeData,
-  FundingType,
   MoneyEdge,
+  MoneyEdgeData,
 } from '../types'
 
 type FlowState = {
@@ -21,7 +21,7 @@ type FlowState = {
   addNode: (kind: BlockKind, position: XYPosition) => void
   updateNodeData: (id: string, patch: Partial<FundNodeData>) => void
   updateEdgeAmount: (id: string, amount: number | null) => void
-  updateEdgeFundingType: (id: string, fundingType: FundingType | undefined) => void
+  updateEdgeData: (id: string, patch: Partial<MoneyEdgeData>) => void
   newChart: (name?: string) => void
   renameChart: (name: string) => void
   switchChart: (id: string) => void
@@ -91,10 +91,10 @@ export const useFlowStore = create<FlowState>()(
             ),
           })),
 
-        updateEdgeFundingType: (id, fundingType) =>
+        updateEdgeData: (id, patch) =>
           patchActive((c) => ({
             edges: c.edges.map((e) =>
-              e.id === id ? { ...e, data: { amount: e.data?.amount ?? null, fundingType } } : e,
+              e.id === id ? { ...e, data: { amount: null, ...e.data, ...patch } } : e,
             ),
           })),
 

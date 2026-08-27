@@ -1,4 +1,4 @@
-import type { FundingType } from '../types'
+import type { FundingDuration, FundingType, SpendingRoute, SpendingUse } from '../types'
 
 export type FundingTypeInfo = {
   id: FundingType
@@ -16,12 +16,40 @@ export const FUNDING_TYPES: Record<FundingType, FundingTypeInfo> = {
     short: 'Taxes',
     blurb: 'What people and companies pay in',
   },
+  userFee: {
+    id: 'userFee',
+    emoji: '🎫',
+    label: 'User fee or fine',
+    short: 'User fee',
+    blurb: 'Charges an agency collects itself — permits, tickets, park passes',
+  },
   appropriation: {
     id: 'appropriation',
     emoji: '🗳️',
     label: 'Appropriation',
     short: 'Appropriation',
     blurb: 'Money Congress sets aside for an agency in a spending bill',
+  },
+  discretionary: {
+    id: 'discretionary',
+    emoji: '🗓️',
+    label: 'Discretionary spending',
+    short: 'Discretionary',
+    blurb: 'Argued over and set fresh in each year’s appropriations bills',
+  },
+  mandatory: {
+    id: 'mandatory',
+    emoji: '🔒',
+    label: 'Mandatory spending',
+    short: 'Mandatory',
+    blurb: 'Locked in by standing law — Social Security, Medicare, SNAP',
+  },
+  debtInterest: {
+    id: 'debtInterest',
+    emoji: '💸',
+    label: 'Interest on the debt',
+    short: 'Debt interest',
+    blurb: 'What the government owes on money it already borrowed',
   },
   formula: {
     id: 'formula',
@@ -131,7 +159,11 @@ export const FUNDING_TYPES: Record<FundingType, FundingTypeInfo> = {
 }
 
 export const FUNDING_TYPE_GROUPS: { title: string; ids: FundingType[] }[] = [
-  { title: 'Where it starts', ids: ['taxes', 'appropriation'] },
+  { title: 'Where it starts', ids: ['taxes', 'userFee'] },
+  {
+    title: 'How Congress classes it',
+    ids: ['appropriation', 'discretionary', 'mandatory', 'debtInterest'],
+  },
   {
     title: 'Grants',
     ids: ['formula', 'competitive', 'block', 'coop', 'subaward', 'earmark'],
@@ -140,3 +172,79 @@ export const FUNDING_TYPE_GROUPS: { title: string; ids: FundingType[] }[] = [
   { title: 'Reaching people', ids: ['voucher', 'taxCredit'] },
   { title: 'Everything else', ids: ['match', 'indirect', 'donation'] },
 ]
+
+export type FundingDurationInfo = {
+  id: FundingDuration
+  emoji: string
+  label: string
+  short: string
+  blurb: string
+}
+
+export const FUNDING_DURATIONS: Record<FundingDuration, FundingDurationInfo> = {
+  singleYear: {
+    id: 'singleYear',
+    emoji: '⏱️',
+    label: 'Single-year money',
+    short: '1-year',
+    blurb: 'Spend it inside one fiscal year or it goes back',
+  },
+  multiYear: {
+    id: 'multiYear',
+    emoji: '⏳',
+    label: 'Multi-year money',
+    short: 'Multi-year',
+    blurb: 'Stays available for a set run of years',
+  },
+  noYear: {
+    id: 'noYear',
+    emoji: '♾️',
+    label: 'No-year money',
+    short: 'No-year',
+    blurb: 'Stays available until every dollar is spent',
+  },
+}
+
+export type SpendingUseInfo = { id: SpendingUse; emoji: string; label: string; short: string; blurb: string }
+
+export const SPENDING_USES: Record<SpendingUse, SpendingUseInfo> = {
+  programmatic: {
+    id: 'programmatic',
+    emoji: '🎯',
+    label: 'Programmatic',
+    short: 'Program',
+    blurb: 'Pays for the mission itself — services, benefits, projects',
+  },
+  operational: {
+    id: 'operational',
+    emoji: '🏢',
+    label: 'Operational',
+    short: 'Operations',
+    blurb: 'Keeps the place running — staff, rent, systems',
+  },
+}
+
+export type SpendingRouteInfo = {
+  id: SpendingRoute
+  emoji: string
+  label: string
+  short: string
+  blurb: string
+}
+
+export const SPENDING_ROUTES: Record<SpendingRoute, SpendingRouteInfo> = {
+  direct: {
+    id: 'direct',
+    emoji: '➡️',
+    label: 'Direct spending',
+    short: 'Direct',
+    blurb: 'Government pays the final recipient itself',
+  },
+  indirect: {
+    id: 'indirect',
+    emoji: '🔀',
+    label: 'Indirect spending',
+    short: 'Indirect',
+    blurb: 'Handed off through a grant, agreement or contract',
+  },
+}

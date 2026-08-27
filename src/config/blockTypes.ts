@@ -71,8 +71,8 @@ export const BLOCK_TYPES: Record<BlockKind, BlockType> = {
     emoji: '🪶',
     label: 'Tribal Government',
     blurb: 'A sovereign nation that gets funding directly',
-    color: '#a16207',
-    colorSoft: '#fef9c3',
+    color: '#92400e',
+    colorSoft: '#fef3c7',
   },
   schoolDistrict: {
     kind: 'schoolDistrict',
@@ -82,6 +82,15 @@ export const BLOCK_TYPES: Record<BlockKind, BlockType> = {
     blurb: 'Local school money, mostly from property taxes',
     color: '#0f766e',
     colorSoft: '#ccfbf1',
+  },
+  feeRevenue: {
+    kind: 'feeRevenue',
+    role: 'source',
+    emoji: '🎫',
+    label: 'Agency Fees & Fines',
+    blurb: 'Money an agency raises itself, not handed to it by Congress',
+    color: '#334155',
+    colorSoft: '#e2e8f0',
   },
   foundation: {
     kind: 'foundation',
@@ -126,7 +135,7 @@ export const BLOCK_TYPES: Record<BlockKind, BlockType> = {
     emoji: '🏆',
     label: 'Competitive Grant',
     blurb: 'You apply against everyone else and the agency picks',
-    color: '#059669',
+    color: '#047857',
     colorSoft: '#ccfbf1',
   },
   coopAgreement: {
@@ -207,8 +216,8 @@ export const BLOCK_TYPES: Record<BlockKind, BlockType> = {
     emoji: '🎟️',
     label: 'Voucher Program',
     blurb: 'Help paid on a person’s behalf, like housing vouchers',
-    color: '#7c3aed',
-    colorSoft: '#ede9fe',
+    color: '#6d28d9',
+    colorSoft: '#ddd6fe',
   },
 
   ngo: {
@@ -253,7 +262,7 @@ export const BLOCK_TYPES: Record<BlockKind, BlockType> = {
     emoji: '🏥',
     label: 'Hospital / Clinic',
     blurb: 'Care paid for by public health money',
-    color: '#0891b2',
+    color: '#155e75',
     colorSoft: '#cffafe',
   },
   household: {
@@ -289,6 +298,7 @@ export const PALETTE_GROUPS: { title: string; hint: string; kinds: BlockKind[] }
       'city',
       'tribal',
       'schoolDistrict',
+      'feeRevenue',
       'foundation',
     ],
   },

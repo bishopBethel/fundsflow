@@ -25,16 +25,27 @@ describe('editing one field of an edge', () => {
     expect(seededEdge().data).toEqual({ amount: 250_000, fundingType: 'formula' })
   })
 
-  it('keeps the amount when the funding type changes', () => {
-    seed({ amount: 100_000, fundingType: 'formula' })
-    useFlowStore.getState().updateEdgeFundingType('e1', 'subaward')
-    expect(seededEdge().data).toEqual({ amount: 100_000, fundingType: 'subaward' })
+  it('keeps the amount and the other tags when the funding type changes', () => {
+    seed({ amount: 100_000, fundingType: 'formula', duration: 'multiYear' })
+    useFlowStore.getState().updateEdgeData('e1', { fundingType: 'subaward' })
+    expect(seededEdge().data).toEqual({
+      amount: 100_000,
+      fundingType: 'subaward',
+      duration: 'multiYear',
+    })
   })
 
   it('clears the funding type when it is unset', () => {
     seed({ amount: 100_000, fundingType: 'formula' })
-    useFlowStore.getState().updateEdgeFundingType('e1', undefined)
+    useFlowStore.getState().updateEdgeData('e1', { fundingType: undefined })
     expect(seededEdge().data?.fundingType).toBeUndefined()
     expect(seededEdge().data?.amount).toBe(100_000)
+  })
+
+  it('starts data from a null amount when an edge somehow has none', () => {
+    const edge = { id: 'e1', type: 'money' as const, source: 'a', target: 'b' }
+    useFlowStore.getState().loadChartData('test map', nodes, [edge])
+    useFlowStore.getState().updateEdgeData('e1', { spendingUse: 'operational' })
+    expect(seededEdge().data).toEqual({ amount: null, spendingUse: 'operational' })
   })
 })

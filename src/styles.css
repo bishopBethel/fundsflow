@@ -523,6 +523,54 @@ body,
   transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px)) scale(1.06);
 }
 
+/* The popover is a child, so any parent scale would smear its text. */
+.edge-label.open,
+.edge-label.open:hover {
+  transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px));
+  z-index: 10;
+}
+
+.edge-details {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 210px;
+  padding: 10px;
+  cursor: default;
+  background: var(--panel);
+  border: 2px solid var(--edge-color);
+  box-shadow: var(--shadow-lift);
+}
+
+.edge-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.edge-detail span {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+.edge-detail select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 3px 2px;
+}
+
 .edge-label.unset {
   border-style: dashed;
   border-color: #94a3b8;
@@ -562,17 +610,6 @@ body,
 
 .edge-type:hover {
   background: color-mix(in srgb, var(--edge-color) 26%, transparent);
-}
-
-.edge-type-select {
-  max-width: 150px;
-  font-size: 11px;
-  font-weight: 700;
-  font-family: inherit;
-  color: var(--ink);
-  background: var(--panel);
-  border: 1px solid var(--edge-color);
-  padding: 1px 2px;
 }
 
 .edge-label .money-input {
