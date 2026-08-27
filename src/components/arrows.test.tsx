@@ -119,6 +119,23 @@ describe('edge arrowheads', () => {
     expect(thinSize).toBeGreaterThan(strokeWidth(thin))
   })
 
+  it('survives an imported chart with an unknown kind or a broken amount', () => {
+    setChart(
+      [{ ...node('mystery', 'federal'), data: { kind: 'wat' as FundNode['data']['kind'], label: 'x' } },
+       node('ngo', 'ngo')],
+      [edge('e1', 'mystery', 500), edge('e2', 'ngo', -20), edge('e3', 'ngo', Number.NaN)],
+    )
+    const defs = renderToStaticMarkup(<ArrowDefs nodes={chart.nodes} edges={chart.edges} />)
+
+    for (const e of chart.edges) {
+      const markup = renderEdge(e)
+      const id = markerEndId(markup)!
+      expect(id).toMatch(/^money-arrow-[a-zA-Z0-9_-]+-\d+$/)
+      expect(strokeWidth(markup)).toBeGreaterThan(0)
+      expect(markerSize(defs, id)).toBeGreaterThan(0)
+    }
+  })
+
   it('shares one marker between edges that match in colour and size', () => {
     setChart(
       [node('federal', 'federal'), node('ngo', 'ngo')],
