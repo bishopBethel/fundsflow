@@ -1,10 +1,11 @@
 import { memo, useState } from 'react'
 import { BaseEdge, EdgeLabelRenderer, getBezierPath } from '@xyflow/react'
 import type { EdgeProps } from '@xyflow/react'
+import { FUNDING_TYPES, FUNDING_TYPE_GROUPS } from '../config/fundingTypes'
 import { edgeVisuals, maxEdgeAmount } from '../lib/edgeStyle'
 import { formatMoney } from '../lib/format'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
-import type { MoneyEdge as MoneyEdgeType } from '../types'
+import type { FundingType, MoneyEdge as MoneyEdgeType } from '../types'
 import { MoneyInput } from './MoneyInput'
 
 export const MoneyEdge = memo(
@@ -29,10 +30,13 @@ export const MoneyEdge = memo(
       targetPosition,
     })
     const [editing, setEditing] = useState(false)
+    const [pickingType, setPickingType] = useState(false)
     const updateEdgeAmount = useFlowStore((s) => s.updateEdgeAmount)
+    const updateEdgeFundingType = useFlowStore((s) => s.updateEdgeFundingType)
     const chart = useActiveChart()
 
     const amount = data?.amount ?? null
+    const fundingType = data?.fundingType ? FUNDING_TYPES[data.fundingType] : null
     const maxAmount = maxEdgeAmount(chart.edges)
     const { color, stroke, width, markerId } = edgeVisuals(source, amount, chart.nodes, maxAmount)
     const pathId = `money-path-${id}`
@@ -66,20 +70,53 @@ export const MoneyEdge = memo(
               '--ty': `${labelY}px`,
               '--edge-color': color,
             } as React.CSSProperties}
-            onClick={() => setEditing(true)}
           >
-            {editing ? (
-              <MoneyInput
-                value={amount}
-                placeholder="e.g. 250k"
+            <span className="edge-amount" onClick={() => setEditing(true)}>
+              {editing ? (
+                <MoneyInput
+                  value={amount}
+                  placeholder="e.g. 250k"
+                  autoFocus
+                  onCommit={(v) => updateEdgeAmount(id, v)}
+                  onDone={() => setEditing(false)}
+                />
+              ) : amount == null ? (
+                '＄ set amount'
+              ) : (
+                formatMoney(amount)
+              )}
+            </span>
+
+            {pickingType ? (
+              <select
+                className="edge-type-select nodrag nopan"
                 autoFocus
-                onCommit={(v) => updateEdgeAmount(id, v)}
-                onDone={() => setEditing(false)}
-              />
-            ) : amount == null ? (
-              <span>＄ set amount</span>
+                value={data?.fundingType ?? ''}
+                onChange={(e) => {
+                  updateEdgeFundingType(id, (e.target.value || undefined) as FundingType | undefined)
+                  setPickingType(false)
+                }}
+                onBlur={() => setPickingType(false)}
+              >
+                <option value="">— no funding type —</option>
+                {FUNDING_TYPE_GROUPS.map((group) => (
+                  <optgroup key={group.title} label={group.title}>
+                    {group.ids.map((fid) => (
+                      <option key={fid} value={fid}>
+                        {FUNDING_TYPES[fid].emoji} {FUNDING_TYPES[fid].label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             ) : (
-              <span>{formatMoney(amount)}</span>
+              <span
+                className={`edge-type ${fundingType ? '' : 'unset'}`}
+                title={fundingType?.blurb ?? 'How is this money handed over?'}
+                onClick={() => setPickingType(true)}
+              >
+                {fundingType ? `${fundingType.emoji} ${fundingType.short}` : '🏷️ type'}
+              </span>
             )}
           </div>
         </EdgeLabelRenderer>
