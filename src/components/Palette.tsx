@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { BLOCK_TYPES } from '../config/blockTypes'
-import { countBlocks, searchPalette } from '../lib/blockSearch'
+import { countBlocks, filterPalette, searchTerms } from '../lib/blockSearch'
 import type { BlockKind } from '../types'
 
 const onDragStart = (e: React.DragEvent, kind: BlockKind) => {
@@ -8,35 +8,64 @@ const onDragStart = (e: React.DragEvent, kind: BlockKind) => {
   e.dataTransfer.effectAllowed = 'move'
 }
 
+export const statusText = (searching: boolean, found: number) =>
+  !searching || found === 0 ? '' : `${found} block${found === 1 ? '' : 's'}`
+
 export function Palette() {
   const [query, setQuery] = useState('')
-  const groups = useMemo(() => searchPalette(query), [query])
-  const searching = query.trim().length > 0
+  const inputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLElement>(null)
+  const terms = useMemo(() => searchTerms(query), [query])
+  const groups = useMemo(() => filterPalette(terms), [terms])
+  const searching = terms.length > 0
   const found = countBlocks(groups)
 
+  // Filtering rewrites the list under a scrolled viewport, stranding the top matches.
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: 0 })
+  }, [terms])
+
+  // Focus the input rather than let the unmounting button drop focus to <body>,
+  // where React Flow reads the next Backspace as "delete the selected node".
+  const clear = () => {
+    setQuery('')
+    inputRef.current?.focus()
+  }
+
   return (
-    <aside className="palette">
+    <aside className="palette" ref={listRef}>
       <div className="palette-intro">
         <strong>Building blocks</strong>
         <span>Drag one onto the canvas →</span>
       </div>
 
       <div className="palette-search">
-        <div className="palette-search-field">
-          <span className="palette-search-icon" aria-hidden="true">
+        <div
+          className="palette-search-field"
+          onMouseDown={(e) => {
+            if (e.target !== e.currentTarget) return
+            e.preventDefault()
+            inputRef.current?.focus()
+          }}
+        >
+          <label className="palette-search-icon" htmlFor="palette-search" aria-hidden="true">
             🔍
-          </span>
+          </label>
           <input
+            id="palette-search"
+            ref={inputRef}
             className="palette-search-input"
             type="search"
             value={query}
             placeholder="Search blocks…"
             aria-label="Search building blocks"
             autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="none"
             spellCheck={false}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Escape') setQuery('')
+              if (e.key === 'Escape') clear()
             }}
           />
           {searching && (
@@ -45,17 +74,15 @@ export function Palette() {
               type="button"
               aria-label="Clear search"
               title="Clear search"
-              onClick={() => setQuery('')}
+              onClick={clear}
             >
               ✕
             </button>
           )}
         </div>
-        {searching && (
-          <p className="palette-search-count" role="status">
-            {found === 0 ? 'No matches' : `${found} block${found === 1 ? '' : 's'}`}
-          </p>
-        )}
+        <p className="palette-search-count" role="status">
+          {statusText(searching, found)}
+        </p>
       </div>
 
       {groups.map((group) => (
@@ -83,11 +110,13 @@ export function Palette() {
         </section>
       ))}
 
-      {groups.length === 0 && (
-        <p className="palette-empty">
-          Nothing matches “{query.trim()}”. Try a word like <em>grant</em>, <em>school</em> or <em>loan</em>.
-        </p>
-      )}
+      <p className="palette-empty" role="status">
+        {found === 0 && (
+          <>
+            Nothing matches. Try a word like <em>grant</em>, <em>school</em> or <em>housing</em>.
+          </>
+        )}
+      </p>
     </aside>
   )
 }
