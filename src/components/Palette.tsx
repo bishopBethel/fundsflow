@@ -1,4 +1,6 @@
-import { BLOCK_TYPES, PALETTE_GROUPS } from '../config/blockTypes'
+import { useMemo, useState } from 'react'
+import { BLOCK_TYPES } from '../config/blockTypes'
+import { countBlocks, searchPalette } from '../lib/blockSearch'
 import type { BlockKind } from '../types'
 
 const onDragStart = (e: React.DragEvent, kind: BlockKind) => {
@@ -7,13 +9,56 @@ const onDragStart = (e: React.DragEvent, kind: BlockKind) => {
 }
 
 export function Palette() {
+  const [query, setQuery] = useState('')
+  const groups = useMemo(() => searchPalette(query), [query])
+  const searching = query.trim().length > 0
+  const found = countBlocks(groups)
+
   return (
     <aside className="palette">
       <div className="palette-intro">
         <strong>Building blocks</strong>
         <span>Drag one onto the canvas →</span>
       </div>
-      {PALETTE_GROUPS.map((group) => (
+
+      <div className="palette-search">
+        <div className="palette-search-field">
+          <span className="palette-search-icon" aria-hidden="true">
+            🔍
+          </span>
+          <input
+            className="palette-search-input"
+            type="search"
+            value={query}
+            placeholder="Search blocks…"
+            aria-label="Search building blocks"
+            autoComplete="off"
+            spellCheck={false}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setQuery('')
+            }}
+          />
+          {searching && (
+            <button
+              className="palette-search-clear"
+              type="button"
+              aria-label="Clear search"
+              title="Clear search"
+              onClick={() => setQuery('')}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {searching && (
+          <p className="palette-search-count" role="status">
+            {found === 0 ? 'No matches' : `${found} block${found === 1 ? '' : 's'}`}
+          </p>
+        )}
+      </div>
+
+      {groups.map((group) => (
         <section key={group.title} className="palette-group">
           <h3>{group.title}</h3>
           <p className="palette-hint">{group.hint}</p>
@@ -37,6 +82,12 @@ export function Palette() {
           </div>
         </section>
       ))}
+
+      {groups.length === 0 && (
+        <p className="palette-empty">
+          Nothing matches “{query.trim()}”. Try a word like <em>grant</em>, <em>school</em> or <em>loan</em>.
+        </p>
+      )}
     </aside>
   )
 }

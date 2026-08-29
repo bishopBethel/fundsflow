@@ -215,6 +215,90 @@ body,
   color: var(--ink-soft);
 }
 
+/* Pinned to the top of the palette so it survives scrolling the block list. */
+.palette-search {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 -14px 4px;
+  padding: 2px 14px 10px;
+  background: var(--panel);
+}
+
+.palette-search-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1.5px solid var(--line);
+  background: var(--input-bg);
+  transition: border-color 0.15s;
+}
+
+.palette-search-field:focus-within {
+  border-color: var(--accent);
+}
+
+.palette-search-icon {
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.palette-search-input {
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  border: none;
+  outline: none;
+  background: transparent;
+  min-width: 0;
+  flex: 1;
+}
+
+.palette-search-input::placeholder {
+  color: var(--ink-soft);
+}
+
+.palette-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.palette-search-clear {
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 5px;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.palette-search-clear:hover {
+  color: var(--ink);
+  background: var(--hover-bg);
+}
+
+.palette-search-count {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.palette-empty {
+  margin: 14px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.palette-empty em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--ink);
+}
+
 .palette-group h3 {
   margin: 14px 0 2px;
   font-size: 12px;
