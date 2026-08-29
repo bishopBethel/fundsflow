@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { Handle, Position } from '@xyflow/react'
 import type { NodeProps } from '@xyflow/react'
-import { BLOCK_TYPES } from '../config/blockTypes'
+import { blockFor } from '../config/blockTypes'
 import { formatMoney } from '../lib/format'
 import { useFlowStore } from '../store/useFlowStore'
 import type { FundNode as FundNodeType } from '../types'
@@ -9,7 +9,7 @@ import { useBudget } from './BudgetContext'
 import { MoneyInput } from './MoneyInput'
 
 export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) => {
-  const block = BLOCK_TYPES[data.kind]
+  const block = blockFor(data.kind)
   const budget = useBudget(id)
   const updateNodeData = useFlowStore((s) => s.updateNodeData)
   const over = budget?.overAllocated ?? false

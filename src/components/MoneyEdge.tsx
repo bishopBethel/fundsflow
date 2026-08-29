@@ -8,7 +8,7 @@ import {
   SPENDING_ROUTES,
   SPENDING_USES,
 } from '../config/fundingTypes'
-import { edgeVisuals, maxEdgeAmount } from '../lib/edgeStyle'
+import { drawableAmount, edgeVisuals, maxEdgeAmount } from '../lib/edgeStyle'
 import { edgeTags } from '../lib/edgeTags'
 import { formatMoney } from '../lib/format'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
@@ -100,7 +100,7 @@ export const MoneyEdge = memo(
       return () => document.removeEventListener('pointerdown', close)
     }, [detailsOpen])
 
-    const amount = data?.amount ?? null
+    const amount = drawableAmount(data?.amount)
     const maxAmount = maxEdgeAmount(chart.edges)
     const { color, stroke, width, markerId } = edgeVisuals(source, amount, chart.nodes, maxAmount)
     const pathId = `money-path-${id}`

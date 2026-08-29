@@ -133,6 +133,8 @@ describe('edge arrowheads', () => {
       expect(id).toMatch(/^money-arrow-[a-zA-Z0-9_-]+-\d+$/)
       expect(strokeWidth(markup)).toBeGreaterThan(0)
       expect(markerSize(defs, id)).toBeGreaterThan(0)
+      // A NaN amount used to reach the SMIL animation as dur="NaNs".
+      expect(markup, `edge ${e.id}`).not.toContain('NaN')
     }
   })
 

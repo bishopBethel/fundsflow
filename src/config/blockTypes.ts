@@ -285,6 +285,18 @@ export const BLOCK_TYPES: Record<BlockKind, BlockType> = {
   },
 }
 
+// Imported JSON reaches the store without its kinds checked against the catalog.
+export const blockFor = (kind: BlockKind): BlockType =>
+  BLOCK_TYPES[kind] ?? {
+    kind,
+    role: 'recipient',
+    emoji: '❓',
+    label: String(kind),
+    blurb: 'This block type is not in the catalog',
+    color: '#94a3b8',
+    colorSoft: '#e2e8f0',
+  }
+
 export const PALETTE_GROUPS: { title: string; hint: string; kinds: BlockKind[] }[] = [
   {
     title: 'Where money starts',
