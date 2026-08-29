@@ -8,7 +8,7 @@ import {
   useReactFlow,
 } from '@xyflow/react'
 import type { IsValidConnection } from '@xyflow/react'
-import { BLOCK_TYPES } from '../config/blockTypes'
+import { BLOCK_TYPES, blockFor } from '../config/blockTypes'
 import { computeBudgets } from '../lib/budget'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import { useTheme } from '../store/useTheme'
@@ -83,7 +83,7 @@ export function Canvas() {
           <MiniMap
             pannable
             zoomable
-            nodeColor={(n) => BLOCK_TYPES[(n as FundNodeType).data.kind].color}
+            nodeColor={(n) => blockFor((n as FundNodeType).data.kind).color}
             nodeBorderRadius={0}
           />
           <Controls showInteractive={false} />

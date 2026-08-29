@@ -11,6 +11,10 @@ export const ARROW_STEP = 2
 const usableAmount = (amount: number | null | undefined) =>
   typeof amount === 'number' && Number.isFinite(amount) && amount > 0 ? amount : 0
 
+// Null when there is no amount to draw, so an unset edge and a NaN one agree.
+export const drawableAmount = (amount: number | null | undefined) =>
+  typeof amount === 'number' && Number.isFinite(amount) ? amount : null
+
 export function maxEdgeAmount(edges: MoneyEdge[]) {
   return Math.max(1, ...edges.map((e) => usableAmount(e.data?.amount)))
 }
@@ -29,10 +33,11 @@ export function edgeVisuals(
   nodes: FundNode[],
   maxAmount: number,
 ) {
+  const drawable = drawableAmount(amount)
   const sourceNode = nodes.find((n) => n.id === source)
   const color = BLOCK_TYPES[sourceNode?.data.kind as BlockKind]?.color ?? SKETCH_COLOR
-  const stroke = amount == null ? SKETCH_COLOR : color
-  const width = amount == null ? 2 : 2.5 + 6.5 * Math.sqrt(usableAmount(amount) / maxAmount)
+  const stroke = drawable == null ? SKETCH_COLOR : color
+  const width = drawable == null ? 2 : 2.5 + 6.5 * Math.sqrt(usableAmount(drawable) / maxAmount)
   const arrow = arrowSize(width)
   return { color, stroke, width, arrow, markerId: arrowMarkerId(stroke, arrow) }
 }
