@@ -170,15 +170,20 @@ body,
   transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
 }
 
-.toolbar-actions button:hover {
+.toolbar-actions button:hover:not(:disabled) {
   background: var(--btn-hover-bg);
   border-color: var(--btn-hover-line);
   transform: translateY(-1px);
   box-shadow: var(--shadow);
 }
 
-.toolbar-actions button:active {
+.toolbar-actions button:active:not(:disabled) {
   transform: translateY(0) scale(0.97);
+}
+
+.toolbar-actions button:disabled {
+  opacity: 0.55;
+  cursor: progress;
 }
 
 .toolbar-divider {

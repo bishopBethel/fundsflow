@@ -1,6 +1,7 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { exportPng } from '../lib/exportPng'
 import { sampleEdges, sampleNodes } from '../lib/sampleFlow'
+import { fetchAward } from '../lib/usaspending'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import { useTheme } from '../store/useTheme'
 import type { FundNode, MoneyEdge } from '../types'
@@ -10,6 +11,7 @@ export function Toolbar() {
   const charts = useFlowStore((s) => s.charts)
   const { newChart, renameChart, switchChart, deleteChart, loadChartData } = useFlowStore()
   const fileRef = useRef<HTMLInputElement>(null)
+  const [importing, setImporting] = useState(false)
   const theme = useTheme((s) => s.theme)
   const toggleTheme = useTheme((s) => s.toggleTheme)
 
@@ -37,6 +39,16 @@ export function Toolbar() {
     } catch {
       alert("Hmm, that file doesn't look like a FundsFlow chart 🤔")
     }
+  }
+
+  const importAward = async () => {
+    const id = prompt('Federal award ID (PIID or FAIN)\nTry N0001919C0001 or 2146755')
+    if (id === null) return
+    setImporting(true)
+    const result = await fetchAward(id)
+    setImporting(false)
+    if (result.ok) loadChartData(result.chart.name, result.chart.nodes, result.chart.edges)
+    else alert(result.error.message)
   }
 
   return (
@@ -80,6 +92,9 @@ export function Toolbar() {
           onClick={() => loadChartData('Sample: Federal grant journey', sampleNodes, sampleEdges)}
         >
           ✨ Sample
+        </button>
+        <button onClick={importAward} disabled={importing}>
+          {importing ? '📡 Importing…' : '📡 Import award'}
         </button>
         <span className="toolbar-divider" />
         <button onClick={exportJson}>⬇️ JSON</button>

@@ -1,8 +1,9 @@
 # 💸 FundsFlow
 
 Build playful "money maps" — flowcharts of how funds move between government
-organizations, grants, contracts, NGOs, and the people they help. Runs entirely
-on your machine; nothing is deployed or sent anywhere.
+organizations, grants, contracts, NGOs, and the people they help. Runs on your
+machine with no backend — the only thing it ever sends anywhere is an award ID
+you type into 📡 Import award, which goes straight to USAspending.gov.
 
 ## Run it
 
@@ -29,6 +30,11 @@ Then open http://localhost:5173.
   and switch between them in the toolbar.
 - **Export** any map as JSON (re-importable, shareable) or a PNG snapshot.
   Try ✨ Sample for a demo federal-grant journey.
+- **📡 Import award** builds a map from a real federal award. Type a PIID or
+  FAIN (try `N0001919C0001` or `2146755`) and it fetches the award from
+  [USAspending.gov](https://api.usaspending.gov), then draws the awarding agency,
+  the award itself, and the recipient with the obligated amount on the arrows.
+  Coverage starts October 2007.
 
 ## Stack
 
