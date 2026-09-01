@@ -1,3 +1,4 @@
+import { columnX } from './layout'
 import type { FundNode, MoneyEdge, MoneyEdgeData } from '../types'
 
 const node = (
@@ -18,23 +19,23 @@ const edge = (
 ): MoneyEdge => ({ id, source, target, type: 'money', data: { amount, ...tags } })
 
 export const sampleNodes: FundNode[] = [
-  node('n1', 'taxpayers', 'U.S. Taxpayers', 0, 210, 12_000_000),
-  node('n17', 'feeRevenue', 'FDA User Fees', 0, 470, 900_000),
-  node('n2', 'congress', 'Congress — FY26 Bill', 480, 300),
-  node('n3', 'federal', 'Health & Human Services', 960, 120),
-  node('n4', 'federal', 'Housing & Urban Dev.', 960, 500),
-  node('n5', 'blockGrant', 'Community Services Block Grant', 1440, 20),
-  node('n6', 'competitiveGrant', 'Healthy Cities NOFO', 1440, 250),
-  node('n7', 'voucher', 'Housing Choice Vouchers', 1440, 500),
-  node('n8', 'state', 'State of Jefferson', 1950, 20),
-  node('n9', 'city', 'City of Riverside', 1950, 250),
-  node('n10', 'household', 'Riverside Families', 1950, 500),
-  node('n11', 'subgrant', 'County Subawards', 2430, -60),
-  node('n12', 'govContract', 'Clinic Build Contract', 2430, 250),
-  node('n13', 'ngo', 'Neighbors United', 2910, -140),
-  node('n14', 'ngo', 'Food For All', 2910, 40),
-  node('n15', 'vendor', 'BrickWorks Construction', 2910, 250),
-  node('n16', 'community', 'Riverside Neighborhoods', 3390, -50),
+  node('n1', 'taxpayers', 'U.S. Taxpayers', columnX(0), 210, 12_000_000),
+  node('n17', 'feeRevenue', 'FDA User Fees', columnX(0), 470, 900_000),
+  node('n2', 'congress', 'Congress — FY26 Bill', columnX(1), 300),
+  node('n3', 'federal', 'Health & Human Services', columnX(2), 120),
+  node('n4', 'federal', 'Housing & Urban Dev.', columnX(2), 500),
+  node('n5', 'blockGrant', 'Community Services Block Grant', columnX(3), 20),
+  node('n6', 'competitiveGrant', 'Healthy Cities NOFO', columnX(3), 250),
+  node('n7', 'voucher', 'Housing Choice Vouchers', columnX(3), 500),
+  node('n8', 'state', 'State of Jefferson', columnX(4), 20),
+  node('n9', 'city', 'City of Riverside', columnX(4), 250),
+  node('n10', 'household', 'Riverside Families', columnX(4), 500),
+  node('n11', 'subgrant', 'County Subawards', columnX(5), -60),
+  node('n12', 'govContract', 'Clinic Build Contract', columnX(5), 250),
+  node('n13', 'ngo', 'Neighbors United', columnX(6), -140),
+  node('n14', 'ngo', 'Food For All', columnX(6), 40),
+  node('n15', 'vendor', 'BrickWorks Construction', columnX(6), 250),
+  node('n16', 'community', 'Riverside Neighborhoods', columnX(7), -50),
 ]
 
 export const sampleEdges: MoneyEdge[] = [
