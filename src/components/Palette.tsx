@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { ChevronRight, Search, X } from 'lucide-react'
 import { BLOCK_TYPES } from '../config/blockTypes'
 import { countBlocks, filterPalette, searchTerms } from '../lib/blockSearch'
 import type { BlockKind } from '../types'
@@ -11,14 +12,28 @@ const onDragStart = (e: React.DragEvent, kind: BlockKind) => {
 export const statusText = (searching: boolean, found: number) =>
   !searching || found === 0 ? '' : `${found} block${found === 1 ? '' : 's'}`
 
+const panelId = (title: string) =>
+  `panel-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+
 export function Palette() {
   const [query, setQuery] = useState('')
+  const [opened, setOpened] = useState<Set<string>>(new Set())
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLElement>(null)
   const terms = useMemo(() => searchTerms(query), [query])
   const groups = useMemo(() => filterPalette(terms), [terms])
   const searching = terms.length > 0
   const found = countBlocks(groups)
+
+  // A search has to reach into collapsed groups, or its matches stay hidden.
+  const isOpen = (title: string) => searching || opened.has(title)
+
+  const toggle = (title: string) =>
+    setOpened((prev) => {
+      const next = new Set(prev)
+      if (!next.delete(title)) next.add(title)
+      return next
+    })
 
   // Filtering rewrites the list under a scrolled viewport, stranding the top matches.
   useEffect(() => {
@@ -49,7 +64,7 @@ export function Palette() {
           }}
         >
           <label className="palette-search-icon" htmlFor="palette-search" aria-hidden="true">
-            🔍
+            <Search size={14} strokeWidth={1.75} />
           </label>
           <input
             id="palette-search"
@@ -76,7 +91,7 @@ export function Palette() {
               title="Clear search"
               onClick={clear}
             >
-              ✕
+              <X size={13} strokeWidth={2} />
             </button>
           )}
         </div>
@@ -87,25 +102,40 @@ export function Palette() {
 
       {groups.map((group) => (
         <section key={group.title} className="palette-group">
-          <h3>{group.title}</h3>
-          <p className="palette-hint">{group.hint}</p>
-          <div className="palette-cards">
-            {group.kinds.map((kind) => {
-              const block = BLOCK_TYPES[kind]
-              return (
-                <div
-                  key={kind}
-                  className="palette-card"
-                  draggable
-                  onDragStart={(e) => onDragStart(e, kind)}
-                  style={{ '--block-color': block.color, '--block-soft': block.colorSoft } as React.CSSProperties}
-                  title={block.blurb}
-                >
-                  <span className="palette-card-emoji">{block.emoji}</span>
-                  <span className="palette-card-label">{block.label}</span>
-                </div>
-              )
-            })}
+          <h3>
+            <button
+              type="button"
+              className="palette-group-toggle"
+              aria-expanded={isOpen(group.title)}
+              aria-controls={panelId(group.title)}
+              onClick={() => toggle(group.title)}
+            >
+              <ChevronRight className="palette-group-chevron" size={13} strokeWidth={2} aria-hidden="true" />
+              <span className="palette-group-title">{group.title}</span>
+              <span className="palette-group-count">{group.kinds.length}</span>
+            </button>
+          </h3>
+          <div className="palette-group-panel" id={panelId(group.title)} hidden={!isOpen(group.title)}>
+            <p className="palette-hint">{group.hint}</p>
+            <div className="palette-cards">
+              {group.kinds.map((kind) => {
+                const block = BLOCK_TYPES[kind]
+                const Icon = block.icon
+                return (
+                  <div
+                    key={kind}
+                    className="palette-card"
+                    draggable
+                    onDragStart={(e) => onDragStart(e, kind)}
+                    style={{ '--block-color': block.color } as React.CSSProperties}
+                    title={block.blurb}
+                  >
+                    <Icon className="palette-card-icon" size={15} strokeWidth={1.75} aria-hidden="true" />
+                    <span className="palette-card-label">{block.label}</span>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </section>
       ))}

@@ -1,69 +1,77 @@
 :root {
   color-scheme: light;
-  --bg: #f6f7fb;
+  --bg: #fafafa;
   --panel: #ffffff;
-  --hover-bg: #f1f3f9;
+  --hover-bg: #f4f4f5;
   --input-bg: #ffffff;
-  --ink: #1e2436;
-  --ink-soft: #6b7390;
-  --line: #e4e7f0;
-  --dash-line: #c9cede;
+  --ink: #18181b;
+  --ink-soft: #71717a;
+  --line: #e4e4e7;
+  --dash-line: #d4d4d8;
+  --dots: #d4d4d8;
+  --edge-rest: #a1a1aa;
+  --edge-rest-soft: #d4d4d8;
   --accent: #f59e0b;
-  --btn-hover-bg: #fffbeb;
-  --btn-hover-line: #fcd34d;
-  --shadow: 0 2px 10px rgba(30, 36, 54, 0.08);
-  --shadow-lift: 0 6px 14px rgba(30, 36, 54, 0.12);
-  --brand-a: #16a34a;
-  --brand-b: #2563eb;
+  --btn-hover-bg: #f4f4f5;
+  --btn-hover-line: #d4d4d8;
+  --shadow: 0 1px 2px rgba(24, 24, 27, 0.05);
+  --shadow-lift: 0 4px 12px rgba(24, 24, 27, 0.1);
   --danger: #dc2626;
-  --chip-in-bg: #dcfce7;
-  --chip-in-ink: #15803d;
-  --chip-out-bg: #ffedd5;
-  --chip-out-ink: #c2410c;
-  --chip-left-bg: #e0e7ff;
-  --chip-left-ink: #4338ca;
-  --chip-neg-bg: #fee2e2;
-  --chip-neg-ink: #dc2626;
-  font-family: ui-rounded, 'SF Pro Rounded', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --danger-bg: #fef2f2;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   color: var(--ink);
+  -webkit-font-smoothing: antialiased;
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0d1017;
-  --panel: #171c27;
-  --hover-bg: #222836;
-  --input-bg: #10141d;
-  --ink: #e7eaf3;
-  --ink-soft: #949dba;
-  --line: #2a3142;
-  --dash-line: #39415a;
-  --btn-hover-bg: #2a2213;
-  --btn-hover-line: #a16207;
-  --shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  --shadow-lift: 0 6px 14px rgba(0, 0, 0, 0.6);
-  --brand-a: #4ade80;
-  --brand-b: #60a5fa;
+  --bg: #09090b;
+  --panel: #18181b;
+  --hover-bg: #27272a;
+  --input-bg: #101012;
+  --ink: #fafafa;
+  --ink-soft: #a1a1aa;
+  --line: #27272a;
+  --dash-line: #3f3f46;
+  --dots: #27272a;
+  --edge-rest: #52525b;
+  --edge-rest-soft: #3f3f46;
+  --btn-hover-bg: #27272a;
+  --btn-hover-line: #3f3f46;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lift: 0 4px 12px rgba(0, 0, 0, 0.5);
   --danger: #f87171;
-  --chip-in-bg: #10321f;
-  --chip-in-ink: #4ade80;
-  --chip-out-bg: #35210d;
-  --chip-out-ink: #fb923c;
-  --chip-left-bg: #1e2145;
-  --chip-left-ink: #a5b4fc;
-  --chip-neg-bg: #3a1418;
-  --chip-neg-ink: #f87171;
+  --danger-bg: #2a1416;
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* Sharp edges everywhere. :where() keeps the app-wide reset at zero specificity so
-   any class can opt out; .react-flow * matches the library's own class-level radii. */
-:where(*, *::before, *::after),
-.react-flow * {
-  border-radius: 0;
+/* Block hues are picked to sit on a white card. On a dark panel they read as
+   near-black, so lift them toward white wherever they show as ink. */
+.fund-node,
+.palette-card {
+  --block-ink: var(--block-color);
+}
+
+.money-edge,
+.edge-label {
+  --edge-ink: var(--edge-color);
+}
+
+:root[data-theme='dark'] .fund-node,
+:root[data-theme='dark'] .palette-card {
+  --block-ink: color-mix(in srgb, var(--block-color) 55%, #ffffff);
+}
+
+:root[data-theme='dark'] .money-edge,
+:root[data-theme='dark'] .edge-label {
+  --edge-ink: color-mix(in srgb, var(--edge-color) 55%, #ffffff);
 }
 
 html,
@@ -105,30 +113,28 @@ body,
 }
 
 .toolbar-logo {
-  font-size: 24px;
+  color: var(--ink-soft);
 }
 
 .toolbar-title {
-  font-weight: 800;
-  font-size: 18px;
-  letter-spacing: -0.02em;
-  background: linear-gradient(120deg, var(--brand-a), var(--brand-b));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
 .chart-name {
   font: inherit;
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: 500;
+  font-size: 14px;
   color: var(--ink);
-  border: 2px solid transparent;
-  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 6px 9px;
   background: transparent;
   min-width: 0;
   flex: 0 1 260px;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.12s, background 0.12s;
 }
 
 .chart-name:hover {
@@ -144,8 +150,9 @@ body,
 .chart-switcher {
   font: inherit;
   font-size: 13px;
-  padding: 7px 10px;
+  padding: 6px 9px;
   border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   background: var(--panel);
   color: var(--ink-soft);
   max-width: 180px;
@@ -154,41 +161,40 @@ body,
 .toolbar-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   margin-left: auto;
 }
 
 .toolbar-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font: inherit;
   font-size: 13px;
-  font-weight: 600;
-  padding: 7px 11px;
-  border: 1px solid var(--line);
-  background: var(--panel);
-  color: var(--ink);
+  font-weight: 500;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
   cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 
 .toolbar-actions button:hover:not(:disabled) {
   background: var(--btn-hover-bg);
-  border-color: var(--btn-hover-line);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow);
-}
-
-.toolbar-actions button:active:not(:disabled) {
-  transform: translateY(0) scale(0.97);
+  border-color: var(--line);
+  color: var(--ink);
 }
 
 .toolbar-actions button:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: progress;
 }
 
 .toolbar-divider {
   width: 1px;
-  height: 22px;
+  height: 18px;
   background: var(--line);
   margin: 0 4px;
 }
@@ -209,11 +215,12 @@ body,
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .palette-intro strong {
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .palette-intro span {
@@ -227,7 +234,7 @@ body,
   top: 0;
   z-index: 2;
   margin: 0 -14px;
-  padding: 2px 14px 14px;
+  padding: 2px 14px 12px;
   background: var(--panel);
 }
 
@@ -236,10 +243,11 @@ body,
   align-items: center;
   gap: 6px;
   padding: 6px 8px;
-  border: 1.5px solid var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   background: var(--input-bg);
   cursor: text;
-  transition: border-color 0.15s;
+  transition: border-color 0.12s;
 }
 
 .palette-search-field:focus-within {
@@ -247,9 +255,8 @@ body,
 }
 
 .palette-search-icon {
-  font-size: 12px;
-  line-height: 1;
-  opacity: 0.7;
+  display: flex;
+  color: var(--ink-soft);
 }
 
 .palette-search-input {
@@ -272,17 +279,15 @@ body,
 }
 
 .palette-search-clear {
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  min-width: 24px;
-  min-height: 24px;
+  min-width: 22px;
+  min-height: 22px;
   padding: 0;
   border: none;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink-soft);
   cursor: pointer;
@@ -317,65 +322,117 @@ body,
 
 .palette-empty em {
   font-style: normal;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--ink);
 }
 
-.palette-group:first-of-type h3 {
-  margin-top: 0;
+.palette-group h3 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
-.palette-group h3 {
-  margin: 14px 0 2px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.palette-group-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin: 2px 0;
+  padding: 7px 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.palette-group-toggle:hover {
+  background: var(--hover-bg);
+}
+
+.palette-group-toggle:focus-visible {
+  outline: 1.5px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.palette-group-chevron {
+  flex-shrink: 0;
   color: var(--ink-soft);
+  transition: transform 0.15s;
+}
+
+.palette-group-toggle[aria-expanded='true'] .palette-group-chevron {
+  transform: rotate(90deg);
+}
+
+.palette-group-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.palette-group-count {
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* .palette-cards sets display, which would otherwise beat the UA [hidden] rule. */
+.palette-group-panel[hidden] {
+  display: none;
+}
+
+.palette-group-panel {
+  padding: 0 0 6px 6px;
 }
 
 .palette-hint {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-size: 11px;
   color: var(--ink-soft);
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
 .palette-cards {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 2px;
 }
 
 .palette-card {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  background: var(--block-soft);
-  border: 2px solid transparent;
+  gap: 9px;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
   cursor: grab;
   user-select: none;
-  transition: transform 0.14s, box-shadow 0.14s, border-color 0.14s;
+  transition: background 0.12s, border-color 0.12s;
 }
 
 .palette-card:hover {
-  transform: translateY(-2px) rotate(-0.6deg);
-  border-color: var(--block-color);
-  box-shadow: var(--shadow-lift);
+  background: var(--hover-bg);
+  border-color: var(--line);
 }
 
 .palette-card:active {
   cursor: grabbing;
-  transform: scale(0.97);
 }
 
-.palette-card-emoji {
-  font-size: 22px;
+.palette-card-icon {
+  color: var(--block-ink);
+  flex-shrink: 0;
 }
 
 .palette-card-label {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -394,7 +451,28 @@ body,
 .react-flow__controls,
 .react-flow__minimap {
   overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
   box-shadow: var(--shadow);
+}
+
+.react-flow__controls-button {
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  fill: var(--ink-soft);
+  width: 26px;
+  height: 26px;
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--hover-bg);
+  fill: var(--ink);
 }
 
 /* ---------- fund node ---------- */
@@ -402,51 +480,24 @@ body,
 .fund-node {
   width: 244px;
   background: var(--panel);
-  border: 2.5px solid var(--block-color);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 10px 12px 12px;
-  animation: node-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transition: box-shadow 0.15s;
+  padding: 12px;
+  transition: box-shadow 0.12s, border-color 0.12s;
+}
+
+.fund-node:hover {
+  box-shadow: var(--shadow-lift);
 }
 
 .fund-node.selected {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--block-color) 30%, transparent),
-    var(--shadow-lift);
-}
-
-@keyframes node-pop {
-  from {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  border-color: var(--block-ink);
+  box-shadow: 0 0 0 1.5px var(--block-ink);
 }
 
 .fund-node.over-budget {
-  border-color: #ef4444;
-  animation: wobble 0.5s ease-in-out;
-}
-
-@keyframes wobble {
-  0%, 100% { transform: rotate(0); }
-  25% { transform: rotate(-1.6deg); }
-  50% { transform: rotate(1.4deg); }
-  75% { transform: rotate(-0.8deg); }
-}
-
-.over-badge {
-  position: absolute;
-  top: -12px;
-  right: 10px;
-  background: #ef4444;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 8px;
-  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+  border-color: var(--danger);
 }
 
 .fund-node-head {
@@ -455,13 +506,8 @@ body,
   gap: 9px;
 }
 
-.fund-node-emoji {
-  font-size: 26px;
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  background: var(--block-soft);
+.fund-node-icon {
+  color: var(--block-ink);
   flex-shrink: 0;
 }
 
@@ -473,12 +519,14 @@ body,
 
 .fund-node-name {
   font: inherit;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 13.5px;
+  font-weight: 600;
   color: var(--ink);
   border: none;
+  border-radius: 4px;
   background: transparent;
-  padding: 1px 2px;
+  padding: 1px 3px;
+  margin-left: -3px;
   width: 100%;
 }
 
@@ -487,15 +535,14 @@ body,
 }
 
 .fund-node-name:focus {
-  outline: 2px solid var(--block-color);
+  outline: 1.5px solid var(--accent);
   background: var(--input-bg);
 }
 
 .fund-node-type {
   font-size: 11px;
-  font-weight: 600;
-  color: var(--block-color);
-  padding-left: 2px;
+  font-weight: 500;
+  color: var(--block-ink);
 }
 
 .fund-node-pot {
@@ -503,9 +550,9 @@ body,
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 9px;
-  font-size: 12px;
-  font-weight: 700;
+  margin-top: 10px;
+  font-size: 11.5px;
+  font-weight: 500;
   color: var(--ink-soft);
 }
 
@@ -516,10 +563,11 @@ body,
 
 .money-input {
   font: inherit;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12.5px;
+  font-weight: 500;
   color: var(--ink);
-  border: 1.5px solid var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   padding: 4px 8px;
   background: var(--input-bg);
 }
@@ -531,82 +579,89 @@ body,
 
 .fund-node-chips {
   display: flex;
-  gap: 5px;
+  gap: 4px;
   margin-top: 10px;
 }
 
 .chip {
+  flex: 1;
   font-size: 10.5px;
-  font-weight: 700;
-  padding: 3px 7px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--hover-bg);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.chip-in {
-  background: var(--chip-in-bg);
-  color: var(--chip-in-ink);
+.chip b {
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin-right: 3px;
 }
 
-.chip-out {
-  background: var(--chip-out-bg);
-  color: var(--chip-out-ink);
-}
-
-.chip-left {
-  background: var(--chip-left-bg);
-  color: var(--chip-left-ink);
+.chip-neg,
+.chip-neg b {
+  color: var(--danger);
 }
 
 .chip-neg {
-  background: var(--chip-neg-bg);
-  color: var(--chip-neg-ink);
+  background: var(--danger-bg);
+}
+
+.fund-node-warn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 9px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--danger);
 }
 
 .flow-handle {
-  width: 13px;
-  height: 13px;
-  background: var(--block-color);
-  border: 2.5px solid var(--panel);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  transition: transform 0.12s;
+  width: 9px;
+  height: 9px;
+  background: var(--panel);
+  border: 1.5px solid var(--dash-line);
+  box-shadow: none;
+  transition: background 0.12s, border-color 0.12s;
 }
 
-.flow-handle:hover {
-  transform: scale(1.35);
+.react-flow__handle-left.flow-handle {
+  left: -5px;
 }
 
-/* Block pastels are light-mode swatches; dark mode tints the hue over the panel. */
-:root[data-theme='dark'] .palette-card,
-:root[data-theme='dark'] .fund-node-emoji {
-  background: color-mix(in srgb, var(--block-color) 48%, var(--panel));
+.react-flow__handle-right.flow-handle {
+  right: -5px;
 }
 
-:root[data-theme='dark'] .palette-card {
-  border-color: color-mix(in srgb, var(--block-color) 60%, var(--panel));
+.flow-handle:hover,
+.fund-node:hover .flow-handle {
+  background: var(--block-ink);
+  border-color: var(--block-ink);
 }
 
 /* ---------- money edge ---------- */
 
-.money-edge.live {
-  stroke-dasharray: 10 7;
-  stroke-linecap: round;
-  animation: dash-flow 0.7s linear infinite;
+/* Neutral at rest; the source block's colour arrives as --edge-color and only
+   shows on hover or selection, so a busy chart stays quiet. */
+.money-edge {
+  stroke: var(--edge-rest);
+  transition: stroke 0.12s;
 }
 
 .money-edge.sketch {
-  stroke-dasharray: 4 6;
+  stroke: var(--edge-rest-soft);
+  stroke-dasharray: 4 5;
   stroke-linecap: round;
-  opacity: 0.7;
 }
 
-@keyframes dash-flow {
-  to {
-    stroke-dashoffset: -17;
-  }
-}
-
-.money-traveler {
-  pointer-events: none;
+.react-flow__edge:hover .money-edge,
+.react-flow__edge.selected .money-edge {
+  stroke: var(--edge-ink);
 }
 
 .arrow-defs {
@@ -618,26 +673,38 @@ body,
   position: absolute;
   transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px));
   pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: var(--panel);
-  border: 2px solid var(--edge-color);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   color: var(--ink);
-  font-size: 12px;
-  font-weight: 800;
-  padding: 3px 9px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 8px;
   cursor: pointer;
   box-shadow: var(--shadow);
-  transition: transform 0.12s;
+  transition: border-color 0.12s;
 }
 
 .edge-label:hover {
-  transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px)) scale(1.06);
+  border-color: var(--dash-line);
 }
 
-/* The popover is a child, so any parent scale would smear its text. */
-.edge-label.open,
-.edge-label.open:hover {
-  transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px));
+.edge-label.open {
   z-index: 10;
+}
+
+.edge-label.unset {
+  border-style: dashed;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.edge-label.selected {
+  border-color: var(--edge-ink);
+  box-shadow: 0 0 0 1px var(--edge-ink);
 }
 
 .edge-details {
@@ -647,24 +714,25 @@ body,
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
   width: 210px;
   padding: 10px;
   cursor: default;
   background: var(--panel);
-  border: 2px solid var(--edge-color);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   box-shadow: var(--shadow-lift);
 }
 
 .edge-detail {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .edge-detail span {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--ink-soft);
@@ -674,28 +742,12 @@ body,
   width: 100%;
   font-family: inherit;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--ink);
   background: var(--panel);
   border: 1px solid var(--line);
-  padding: 3px 2px;
-}
-
-.edge-label.unset {
-  border-style: dashed;
-  border-color: #94a3b8;
-  color: var(--ink-soft);
-  font-weight: 600;
-}
-
-.edge-label.selected {
-  outline: 3px solid color-mix(in srgb, var(--edge-color) 30%, transparent);
-}
-
-.edge-label {
-  display: flex;
-  align-items: center;
-  gap: 7px;
+  border-radius: 4px;
+  padding: 4px 3px;
 }
 
 .edge-amount {
@@ -705,28 +757,31 @@ body,
 .edge-type {
   padding: 1px 6px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 500;
   white-space: nowrap;
   color: var(--ink-soft);
-  background: color-mix(in srgb, var(--edge-color) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--edge-color) 35%, transparent);
+  background: var(--hover-bg);
+  border: 1px solid transparent;
+  border-radius: 4px;
   cursor: pointer;
 }
 
 .edge-type.unset {
   border-style: dashed;
-  opacity: 0.75;
+  border-color: var(--line);
+  background: transparent;
 }
 
 .edge-type:hover {
-  background: color-mix(in srgb, var(--edge-color) 26%, transparent);
+  color: var(--ink);
+  border-color: var(--line);
 }
 
 .edge-label .money-input {
   width: 86px;
   border: none;
   padding: 0;
-  font-size: 12px;
+  font-size: 11.5px;
   text-align: center;
   background: transparent;
 }
@@ -748,34 +803,34 @@ body,
 
 .empty-state-card {
   text-align: center;
-  max-width: 380px;
-  padding: 28px 32px;
-  background: color-mix(in srgb, var(--panel) 82%, transparent);
-  border: 2px dashed var(--dash-line);
-  backdrop-filter: blur(2px);
+  max-width: 360px;
+  padding: 26px 30px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
-.empty-state-emoji {
-  font-size: 44px;
-  display: inline-block;
-  animation: float 2.6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
+.empty-state-icon {
+  color: var(--ink-soft);
 }
 
 .empty-state-card h2 {
-  margin: 8px 0 6px;
-  font-size: 20px;
+  margin: 10px 0 6px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .empty-state-card p {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--ink-soft);
-  line-height: 1.5;
+  line-height: 1.55;
+}
+
+.empty-state-card strong {
+  font-weight: 600;
+  color: var(--ink);
 }
 
 /* ---------- summary bar ---------- */
@@ -786,24 +841,31 @@ body,
   bottom: 14px;
   transform: translateX(-50%);
   display: flex;
-  gap: 18px;
+  gap: 16px;
   align-items: center;
   background: var(--panel);
   border: 1px solid var(--line);
-  padding: 8px 20px;
+  border-radius: var(--radius-pill);
+  padding: 7px 18px;
   box-shadow: var(--shadow);
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--ink-soft);
   white-space: nowrap;
   z-index: 6;
 }
 
+.summary-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .summary-stat strong {
   color: var(--ink);
-  margin-left: 4px;
+  font-weight: 600;
 }
 
 .summary-warn {
   color: var(--danger);
-  font-weight: 700;
+  font-weight: 500;
 }

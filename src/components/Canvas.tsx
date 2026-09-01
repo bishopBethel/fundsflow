@@ -8,6 +8,7 @@ import {
   useReactFlow,
 } from '@xyflow/react'
 import type { IsValidConnection } from '@xyflow/react'
+import { Waypoints } from 'lucide-react'
 import { BLOCK_TYPES, blockFor } from '../config/blockTypes'
 import { computeBudgets } from '../lib/budget'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
@@ -22,8 +23,8 @@ import { SummaryBar } from './SummaryBar'
 const nodeTypes = { fund: FundNode }
 const edgeTypes = { money: MoneyEdge }
 
-const DOTS_LIGHT = '#c9cede'
-const DOTS_DARK = '#2c344a'
+const DOTS_LIGHT = '#d4d4d8'
+const DOTS_DARK = '#27272a'
 
 const isValidConnection: IsValidConnection<MoneyEdgeType> = (c) => c.source !== c.target
 
@@ -66,7 +67,7 @@ export function Canvas() {
             e.dataTransfer.dropEffect = 'move'
           }}
           isValidConnection={isValidConnection}
-          connectionLineStyle={{ stroke: '#f59e0b', strokeWidth: 3, strokeDasharray: '8 5' }}
+          connectionLineStyle={{ stroke: '#f59e0b', strokeWidth: 1.5, strokeDasharray: '6 4' }}
           deleteKeyCode={['Backspace', 'Delete']}
           colorMode={theme}
           fitView
@@ -76,26 +77,26 @@ export function Canvas() {
           <ArrowDefs nodes={chart.nodes} edges={chart.edges} />
           <Background
             variant={BackgroundVariant.Dots}
-            gap={22}
-            size={1.6}
+            gap={16}
+            size={1}
             color={theme === 'dark' ? DOTS_DARK : DOTS_LIGHT}
           />
           <MiniMap
             pannable
             zoomable
             nodeColor={(n) => blockFor((n as FundNodeType).data.kind).color}
-            nodeBorderRadius={0}
+            nodeBorderRadius={4}
           />
           <Controls showInteractive={false} />
         </ReactFlow>
         {chart.nodes.length === 0 && (
           <div className="empty-state">
             <div className="empty-state-card">
-              <span className="empty-state-emoji">🗺️</span>
+              <Waypoints className="empty-state-icon" size={26} strokeWidth={1.5} aria-hidden="true" />
               <h2>Build your money map</h2>
               <p>
                 Drag a block in from the left to get started — then draw lines between blocks to
-                show money flowing. Try <strong>✨ Sample</strong> up top to see one in action!
+                show money flowing. Try <strong>Sample</strong> up top to see one in action.
               </p>
             </div>
           </div>

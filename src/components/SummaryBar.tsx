@@ -1,3 +1,4 @@
+import { ArrowRightLeft, PiggyBank, TriangleAlert, Wallet } from 'lucide-react'
 import { formatMoney } from '../lib/format'
 import type { FundNode, MoneyEdge, NodeBudget } from '../types'
 
@@ -16,17 +17,21 @@ export function SummaryBar({ nodes, edges, budgets }: Props) {
   return (
     <footer className="summary-bar">
       <span className="summary-stat">
-        💰 Starting money <strong>{formatMoney(starting)}</strong>
+        <Wallet size={14} strokeWidth={1.75} aria-hidden="true" />
+        Starting money <strong>{formatMoney(starting)}</strong>
       </span>
       <span className="summary-stat">
-        🔀 Moving between blocks <strong>{formatMoney(flowing)}</strong>
+        <ArrowRightLeft size={14} strokeWidth={1.75} aria-hidden="true" />
+        Moving between blocks <strong>{formatMoney(flowing)}</strong>
       </span>
       <span className="summary-stat">
-        💤 Sitting in blocks <strong>{formatMoney(parked)}</strong>
+        <PiggyBank size={14} strokeWidth={1.75} aria-hidden="true" />
+        Sitting in blocks <strong>{formatMoney(parked)}</strong>
       </span>
       {overCount > 0 && (
         <span className="summary-stat summary-warn">
-          😬 {overCount} block{overCount > 1 ? 's' : ''} over budget
+          <TriangleAlert size={14} strokeWidth={1.75} aria-hidden="true" />
+          {overCount} block{overCount > 1 ? 's' : ''} over budget
         </span>
       )}
     </footer>

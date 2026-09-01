@@ -1,4 +1,16 @@
 import { useRef, useState } from 'react'
+import {
+  Banknote,
+  Download,
+  Image as ImageIcon,
+  Moon,
+  Plus,
+  Satellite,
+  Sparkles,
+  Sun,
+  Trash2,
+  Upload,
+} from 'lucide-react'
 import { exportPng } from '../lib/exportPng'
 import { sampleEdges, sampleNodes } from '../lib/sampleFlow'
 import { fetchAward } from '../lib/usaspending'
@@ -37,7 +49,7 @@ export function Toolbar() {
         parsed.edges as MoneyEdge[],
       )
     } catch {
-      alert("Hmm, that file doesn't look like a FundsFlow chart 🤔")
+      alert("Hmm, that file doesn't look like a FundsFlow chart")
     }
   }
 
@@ -54,7 +66,7 @@ export function Toolbar() {
   return (
     <header className="toolbar">
       <div className="toolbar-brand">
-        <span className="toolbar-logo">💸</span>
+        <Banknote className="toolbar-logo" size={18} strokeWidth={1.75} aria-hidden="true" />
         <span className="toolbar-title">FundsFlow</span>
       </div>
 
@@ -80,33 +92,49 @@ export function Toolbar() {
       </select>
 
       <div className="toolbar-actions">
-        <button onClick={() => newChart()}>➕ New</button>
+        <button onClick={() => newChart()}>
+          <Plus size={14} strokeWidth={1.75} aria-hidden="true" /> New
+        </button>
         <button
           onClick={() => {
             if (confirm(`Delete "${chart.name}"? This can't be undone.`)) deleteChart(chart.id)
           }}
         >
-          🗑️ Delete
+          <Trash2 size={14} strokeWidth={1.75} aria-hidden="true" /> Delete
         </button>
         <button
           onClick={() => loadChartData('Sample: Federal grant journey', sampleNodes, sampleEdges)}
         >
-          ✨ Sample
+          <Sparkles size={14} strokeWidth={1.75} aria-hidden="true" /> Sample
         </button>
         <button onClick={importAward} disabled={importing}>
-          {importing ? '📡 Importing…' : '📡 Import award'}
+          <Satellite size={14} strokeWidth={1.75} aria-hidden="true" /> {importing ? 'Importing…' : 'Import award'}
         </button>
         <span className="toolbar-divider" />
-        <button onClick={exportJson}>⬇️ JSON</button>
-        <button onClick={() => fileRef.current?.click()}>⬆️ Import</button>
-        <button onClick={() => exportPng(chart.nodes, chart.name)}>📸 PNG</button>
+        <button onClick={exportJson}>
+          <Download size={14} strokeWidth={1.75} aria-hidden="true" /> JSON
+        </button>
+        <button onClick={() => fileRef.current?.click()}>
+          <Upload size={14} strokeWidth={1.75} aria-hidden="true" /> Import
+        </button>
+        <button onClick={() => exportPng(chart.nodes, chart.name)}>
+          <ImageIcon size={14} strokeWidth={1.75} aria-hidden="true" /> PNG
+        </button>
         <span className="toolbar-divider" />
         <button
           onClick={toggleTheme}
           title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+          {theme === 'dark' ? (
+            <>
+              <Sun size={14} strokeWidth={1.75} aria-hidden="true" /> Light
+            </>
+          ) : (
+            <>
+              <Moon size={14} strokeWidth={1.75} aria-hidden="true" /> Dark
+            </>
+          )}
         </button>
         <input
           ref={fileRef}

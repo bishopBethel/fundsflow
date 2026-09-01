@@ -20,10 +20,10 @@ describe('block catalog', () => {
     expect([...listed].sort()).toEqual([...blockKinds].sort())
   })
 
-  it('keys each block by its own kind and gives it a unique emoji', () => {
+  it('keys each block by its own kind and gives it a unique icon', () => {
     for (const kind of blockKinds) expect(BLOCK_TYPES[kind].kind).toBe(kind)
-    const emojis = blockKinds.map((k) => BLOCK_TYPES[k].emoji)
-    expect(new Set(emojis).size).toBe(emojis.length)
+    const icons = blockKinds.map((k) => BLOCK_TYPES[k].icon)
+    expect(new Set(icons).size).toBe(icons.length)
   })
 
   it('gives each block its own colour, since edges take theirs from the source', () => {
@@ -46,8 +46,7 @@ describe('block catalog', () => {
   it('still hands back a drawable block for a kind it has never heard of', () => {
     const unknown = blockFor('countyGov' as keyof typeof BLOCK_TYPES)
     expect(unknown.color).toMatch(/^#[0-9a-f]{6}$/i)
-    expect(unknown.colorSoft).toMatch(/^#[0-9a-f]{6}$/i)
-    expect(unknown.emoji).toBeTruthy()
+    expect(unknown.icon).toBeTruthy()
     expect(unknown.label).toBe('countyGov')
     for (const kind of blockKinds) expect(blockFor(kind)).toBe(BLOCK_TYPES[kind])
   })
@@ -69,11 +68,6 @@ describe('funding types', () => {
       expect(FUNDING_TYPES[id].id).toBe(id)
       expect(FUNDING_TYPES[id].short.length).toBeLessThanOrEqual(13)
     }
-  })
-
-  it('gives every funding type its own emoji', () => {
-    const emojis = fundingIds.map((id) => FUNDING_TYPES[id].emoji)
-    expect(new Set(emojis).size).toBe(emojis.length)
   })
 
   it('separates the spending categories Congress budgets by', () => {
