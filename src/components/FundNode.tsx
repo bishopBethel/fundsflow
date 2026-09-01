@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { Handle, Position } from '@xyflow/react'
 import type { NodeProps } from '@xyflow/react'
+import { TriangleAlert } from 'lucide-react'
 import { blockFor } from '../config/blockTypes'
 import { formatMoney } from '../lib/format'
 import { useFlowStore } from '../store/useFlowStore'
@@ -13,19 +14,18 @@ export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) =
   const budget = useBudget(id)
   const updateNodeData = useFlowStore((s) => s.updateNodeData)
   const over = budget?.overAllocated ?? false
+  const Icon = block.icon
 
   return (
     <div
       className={`fund-node ${over ? 'over-budget' : ''} ${selected ? 'selected' : ''}`}
-      style={{ '--block-color': block.color, '--block-soft': block.colorSoft } as React.CSSProperties}
+      style={{ '--block-color': block.color } as React.CSSProperties}
     >
       <Handle type="target" position={Position.Left} className="flow-handle" />
       <Handle type="source" position={Position.Right} className="flow-handle" />
 
-      {over && <div className="over-badge">😬 Over budget!</div>}
-
       <div className="fund-node-head">
-        <span className="fund-node-emoji">{block.emoji}</span>
+        <Icon className="fund-node-icon" size={16} strokeWidth={1.75} aria-hidden="true" />
         <div className="fund-node-titles">
           <input
             className="fund-node-name nodrag"
@@ -39,7 +39,7 @@ export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) =
 
       {block.role === 'source' && (
         <label className="fund-node-pot">
-          <span>💰 Starting pot</span>
+          <span>Starting pot</span>
           <MoneyInput
             value={data.pot ?? null}
             placeholder="$0"
@@ -50,18 +50,22 @@ export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) =
 
       {budget && (
         <div className="fund-node-chips">
-          <span className="chip chip-in" title="Money coming in">
-            ⬅ {formatMoney(budget.moneyIn)}
+          <span className="chip" title="Money coming in">
+            <b>In</b> {formatMoney(budget.moneyIn)}
           </span>
-          <span className="chip chip-out" title="Money going out">
-            {formatMoney(budget.moneyOut)} ➡
+          <span className="chip" title="Money going out">
+            <b>Out</b> {formatMoney(budget.moneyOut)}
           </span>
-          <span
-            className={`chip ${budget.remaining < 0 ? 'chip-neg' : 'chip-left'}`}
-            title="Left to use"
-          >
-            🏦 {formatMoney(budget.remaining)}
+          <span className={`chip ${budget.remaining < 0 ? 'chip-neg' : ''}`} title="Left to use">
+            <b>Left</b> {formatMoney(budget.remaining)}
           </span>
+        </div>
+      )}
+
+      {over && (
+        <div className="fund-node-warn">
+          <TriangleAlert size={13} strokeWidth={2} aria-hidden="true" />
+          Over budget
         </div>
       )}
     </div>

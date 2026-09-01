@@ -33,9 +33,9 @@ const MESSAGE: Record<FetchAwardErrorKind, (id: string) => string> = {
   badInput: () => 'Type a federal award ID first — something like N0001919C0001 or 2146755.',
   notFound: (id) =>
     `No federal award found for "${id}". USAspending only covers awards signed since October 2007.`,
-  network: () => "Couldn't reach USAspending. Check your connection and try again 📡",
+  network: () => "Couldn't reach USAspending. Check your connection and try again.",
   server: () => 'USAspending had trouble answering. Try again in a minute.',
-  malformed: () => "USAspending sent back something FundsFlow couldn't read 🤔",
+  malformed: () => "USAspending sent back something FundsFlow couldn't read.",
 }
 
 const fail = (kind: FetchAwardErrorKind, id: string): FetchAwardResult => ({

@@ -20,11 +20,13 @@ export function maxEdgeAmount(edges: MoneyEdge[]) {
 }
 
 export function arrowSize(width: number) {
-  return Math.round((7 + width * 1.6) / ARROW_STEP) * ARROW_STEP
+  return Math.round((4 + width * 1.8) / ARROW_STEP) * ARROW_STEP
 }
 
-export function arrowMarkerId(stroke: string, arrow: number) {
-  return `money-arrow-${stroke.replace(/[^a-zA-Z0-9_-]/g, '')}-${arrow}`
+// Keyed by size alone: markers fill with context-stroke, so one per size covers
+// every colour the edge can take at rest, on hover and when selected.
+export function arrowMarkerId(arrow: number) {
+  return `money-arrow-${arrow}`
 }
 
 export function edgeVisuals(
@@ -36,8 +38,7 @@ export function edgeVisuals(
   const drawable = drawableAmount(amount)
   const sourceNode = nodes.find((n) => n.id === source)
   const color = BLOCK_TYPES[sourceNode?.data.kind as BlockKind]?.color ?? SKETCH_COLOR
-  const stroke = drawable == null ? SKETCH_COLOR : color
-  const width = drawable == null ? 2 : 2.5 + 6.5 * Math.sqrt(usableAmount(drawable) / maxAmount)
+  const width = drawable == null ? 1 : 1 + 1.5 * Math.sqrt(usableAmount(drawable) / maxAmount)
   const arrow = arrowSize(width)
-  return { color, stroke, width, arrow, markerId: arrowMarkerId(stroke, arrow) }
+  return { color, width, arrow, markerId: arrowMarkerId(arrow) }
 }

@@ -9,22 +9,17 @@ type Props = { nodes: FundNode[]; edges: MoneyEdge[] }
 // still finds the markers the edges point at.
 export const ArrowDefs = memo(({ nodes, edges }: Props) => {
   const maxAmount = maxEdgeAmount(edges)
-  const markers = new Map<string, { stroke: string; arrow: number }>()
+  const markers = new Map<string, number>()
   for (const edge of edges) {
-    const { stroke, arrow, markerId } = edgeVisuals(
-      edge.source,
-      edge.data?.amount ?? null,
-      nodes,
-      maxAmount,
-    )
-    markers.set(markerId, { stroke, arrow })
+    const { arrow, markerId } = edgeVisuals(edge.source, edge.data?.amount ?? null, nodes, maxAmount)
+    markers.set(markerId, arrow)
   }
 
   return (
     <ViewportPortal>
       <svg className="arrow-defs" width={0} height={0} aria-hidden="true">
         <defs>
-          {[...markers].map(([id, { stroke, arrow }]) => (
+          {[...markers].map(([id, arrow]) => (
             <marker
               key={id}
               id={id}
@@ -36,7 +31,8 @@ export const ArrowDefs = memo(({ nodes, edges }: Props) => {
               markerUnits="userSpaceOnUse"
               orient="auto-start-reverse"
             >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill={stroke} stroke="none" />
+              {/* context-stroke keeps the head on whatever colour CSS gives the path. */}
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" stroke="none" />
             </marker>
           ))}
         </defs>

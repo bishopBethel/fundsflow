@@ -15,7 +15,7 @@ import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import type { MoneyEdgeData, MoneyEdge as MoneyEdgeType } from '../types'
 import { MoneyInput } from './MoneyInput'
 
-type Choice = { id: string; emoji: string; label: string; short: string; blurb: string }
+type Choice = { id: string; label: string; short: string; blurb: string }
 
 const asGroup = (record: Record<string, Choice>) => [{ title: '', items: Object.values(record) }]
 
@@ -40,7 +40,7 @@ function Picker({
   const options = (items: Choice[]) =>
     items.map((i) => (
       <option key={i.id} value={i.id}>
-        {i.emoji} {i.label}
+        {i.label}
       </option>
     ))
 
@@ -102,10 +102,7 @@ export const MoneyEdge = memo(
 
     const amount = drawableAmount(data?.amount)
     const maxAmount = maxEdgeAmount(chart.edges)
-    const { color, stroke, width, markerId } = edgeVisuals(source, amount, chart.nodes, maxAmount)
-    const pathId = `money-path-${id}`
-    // ~2.4s per pass, faster for bigger flows
-    const travelDur = amount == null ? 4 : Math.max(1.2, 3 - 1.8 * (amount / maxAmount))
+    const { color, width, markerId } = edgeVisuals(source, amount, chart.nodes, maxAmount)
 
     const patch = (key: keyof MoneyEdgeData) => (value: string) =>
       updateEdgeData(id, { [key]: value || undefined } as Partial<MoneyEdgeData>)
@@ -121,21 +118,10 @@ export const MoneyEdge = memo(
       <>
         <BaseEdge
           path={edgePath}
-          className={amount == null ? 'money-edge sketch' : 'money-edge live'}
-          style={{ stroke, strokeWidth: width }}
+          className={amount == null ? 'money-edge sketch' : 'money-edge'}
+          style={{ '--edge-color': color, strokeWidth: width } as React.CSSProperties}
           markerEnd={`url(#${markerId})`}
         />
-        {amount != null && (
-          <g className="money-traveler">
-            <path id={pathId} d={edgePath} fill="none" stroke="none" />
-            <text fontSize={14} textAnchor="middle" dominantBaseline="central">
-              💸
-              <animateMotion dur={`${travelDur}s`} repeatCount="indefinite" rotate="0">
-                <mpath href={`#${pathId}`} />
-              </animateMotion>
-            </text>
-          </g>
-        )}
         <EdgeLabelRenderer>
           <div
             ref={labelRef}
@@ -157,7 +143,7 @@ export const MoneyEdge = memo(
                   onDone={() => setEditing(false)}
                 />
               ) : amount == null ? (
-                '＄ set amount'
+                'Set amount'
               ) : (
                 formatMoney(amount)
               )}
@@ -165,12 +151,12 @@ export const MoneyEdge = memo(
 
             {tags.length === 0 ? (
               <span className="edge-type unset" title="How is this money handed over?" onClick={openDetails}>
-                🏷️ type
+                Type
               </span>
             ) : (
               tags.map((tag) => (
                 <span key={tag.key} className="edge-type" title={tag.blurb} onClick={openDetails}>
-                  {tag.emoji} {tag.short}
+                  {tag.short}
                 </span>
               ))
             )}

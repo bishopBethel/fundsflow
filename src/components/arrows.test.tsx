@@ -88,18 +88,20 @@ describe('edge arrowheads', () => {
     }
   })
 
-  it('fills the arrow with the source block colour, grey while the amount is unset', () => {
+  it('leaves the arrow colour to the stroke, so hover and select recolour it too', () => {
     setChart(
       [node('foundation', 'foundation'), node('ngo', 'ngo')],
       [edge('e1', 'foundation', 500), edge('e2', 'foundation', null)],
     )
     const defs = renderToStaticMarkup(<ArrowDefs nodes={chart.nodes} edges={chart.edges} />)
+    expect(defs).toContain('fill="context-stroke"')
+    expect(defs).not.toMatch(/fill="#[0-9a-f]{6}"/i)
 
-    const live = markerEndId(renderEdge(chart.edges[0]))!
-    const sketch = markerEndId(renderEdge(chart.edges[1]))!
-    expect(live).not.toBe(sketch)
-    expect(defs).toMatch(new RegExp(`id="${live}"[\\s\\S]*?fill="${BLOCK_TYPES.foundation.color}"`))
-    expect(defs).toMatch(new RegExp(`id="${sketch}"[\\s\\S]*?fill="#94a3b8"`))
+    // The path carries its source colour as a custom property and no inline
+    // stroke, leaving the rest/hover/selected colours to the stylesheet.
+    const live = renderEdge(chart.edges[0])
+    expect(live).toContain(`--edge-color:${BLOCK_TYPES.foundation.color}`)
+    expect(live).not.toMatch(/[^-]stroke:/)
   })
 
   it('scales the arrow with the flow-weighted stroke, above the stroke width itself', () => {
@@ -130,7 +132,7 @@ describe('edge arrowheads', () => {
     for (const e of chart.edges) {
       const markup = renderEdge(e)
       const id = markerEndId(markup)!
-      expect(id).toMatch(/^money-arrow-[a-zA-Z0-9_-]+-\d+$/)
+      expect(id).toMatch(/^money-arrow-\d+$/)
       expect(strokeWidth(markup)).toBeGreaterThan(0)
       expect(markerSize(defs, id)).toBeGreaterThan(0)
       // A NaN amount used to reach the SMIL animation as dur="NaNs".
@@ -138,7 +140,7 @@ describe('edge arrowheads', () => {
     }
   })
 
-  it('shares one marker between edges that match in colour and size', () => {
+  it('shares one marker between every edge that arrives at the same size', () => {
     setChart(
       [node('federal', 'federal'), node('ngo', 'ngo')],
       [edge('e1', 'federal', 500), edge('e2', 'federal', 500), edge('e3', 'federal', 500)],
