@@ -1,10 +1,11 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import {
   Background,
   BackgroundVariant,
   Controls,
   MiniMap,
   ReactFlow,
+  useNodesInitialized,
   useReactFlow,
 } from '@xyflow/react'
 import type { IsValidConnection } from '@xyflow/react'
@@ -35,9 +36,18 @@ export function Canvas() {
   const onConnect = useFlowStore((s) => s.onConnect)
   const addNode = useFlowStore((s) => s.addNode)
   const theme = useTheme((s) => s.theme)
-  const { screenToFlowPosition } = useReactFlow()
+  const { screenToFlowPosition, fitView } = useReactFlow()
+  const nodesInitialized = useNodesInitialized()
+  const fittedChartRef = useRef<string | null>(null)
 
   const budgets = useMemo(() => computeBudgets(chart.nodes, chart.edges), [chart.nodes, chart.edges])
+
+  // Nodes measure asynchronously, and the ref keeps a dropped block from yanking the view.
+  useEffect(() => {
+    if (!nodesInitialized || fittedChartRef.current === chart.id) return
+    fittedChartRef.current = chart.id
+    fitView({ padding: 0.2, duration: 400 })
+  }, [chart.id, nodesInitialized, fitView])
 
   const onDrop = useCallback(
     (e: React.DragEvent) => {

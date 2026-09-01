@@ -1,3 +1,4 @@
+import { columnX } from './layout'
 import type { BlockKind, Chart, FundingType, FundNode, MoneyEdge } from '../types'
 
 export type FetchAwardErrorKind = 'badInput' | 'notFound' | 'network' | 'server' | 'malformed'
@@ -259,9 +260,14 @@ const toChart = (d: AwardDetail): Omit<Chart, 'id'> => {
     name: `Award ${d.awardId}`,
     nodes: [
       // The pot matches the outbound total so the agency does not read as over-allocated.
-      node('agency', 'federal', d.agencyLabel, 0, d.amount ?? undefined),
-      node('award', instrument.kind, d.awardId, 320),
-      node('recipient', recipientKind(d.recipientCategories, d.category), d.recipientName, 640),
+      node('agency', 'federal', d.agencyLabel, columnX(0), d.amount ?? undefined),
+      node('award', instrument.kind, d.awardId, columnX(1)),
+      node(
+        'recipient',
+        recipientKind(d.recipientCategories, d.category),
+        d.recipientName,
+        columnX(2),
+      ),
     ],
     edges: [
       edge('agency-award', 'agency', 'award'),
