@@ -1,16 +1,18 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import {
   Background,
   BackgroundVariant,
   Controls,
   MiniMap,
   ReactFlow,
+  useNodesInitialized,
   useReactFlow,
 } from '@xyflow/react'
 import type { IsValidConnection } from '@xyflow/react'
 import { Waypoints } from 'lucide-react'
 import { BLOCK_TYPES, blockFor } from '../config/blockTypes'
 import { computeBudgets } from '../lib/budget'
+import { readyToFit } from '../lib/layout'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import { useTheme } from '../store/useTheme'
 import type { BlockKind, FundNode as FundNodeType, MoneyEdge as MoneyEdgeType } from '../types'
@@ -35,9 +37,23 @@ export function Canvas() {
   const onConnect = useFlowStore((s) => s.onConnect)
   const addNode = useFlowStore((s) => s.addNode)
   const theme = useTheme((s) => s.theme)
-  const { screenToFlowPosition } = useReactFlow()
+  const { screenToFlowPosition, fitView, getNodes } = useReactFlow()
+  const nodesInitialized = useNodesInitialized()
+  const fittedChartRef = useRef<string | null>(null)
 
   const budgets = useMemo(() => computeBudgets(chart.nodes, chart.edges), [chart.nodes, chart.edges])
+
+  useEffect(() => {
+    if (fittedChartRef.current === chart.id) return
+    // An empty map has nothing to frame; claim it so the first dropped block doesn't move the view.
+    if (chart.nodes.length === 0) {
+      fittedChartRef.current = chart.id
+      return
+    }
+    if (!readyToFit(chart.nodes, getNodes(), nodesInitialized)) return
+    fittedChartRef.current = chart.id
+    fitView({ padding: 0.2, duration: 400 })
+  }, [chart.id, chart.nodes, nodesInitialized, fitView, getNodes])
 
   const onDrop = useCallback(
     (e: React.DragEvent) => {

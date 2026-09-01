@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fetchAward } from './usaspending'
+import { COLUMN_GAP, columnX } from './layout'
 import type { FetchAwardResult } from './usaspending'
 import { computeBudgets } from './budget'
 
@@ -105,6 +106,16 @@ describe('importing a federal contract', () => {
       'N0001919C0001',
       'BAE SYSTEMS INFORMATION AND ELECTRONIC SYSTEMS INTEGRATION INC.',
     ])
+  })
+
+  it('spreads the three nodes across columns, so the map reads without dragging', async () => {
+    stubFetch(route)
+    const chart = chartOf(await fetchAward('N0001919C0001'))
+
+    const xs = chart.nodes.map((n) => n.position.x)
+    expect(xs).toEqual([columnX(0), columnX(1), columnX(2)])
+    expect(xs[1] - xs[0]).toBeGreaterThanOrEqual(COLUMN_GAP)
+    expect(new Set(chart.nodes.map((n) => n.position.y)).size).toBe(1)
   })
 
   it('puts the obligated amount on both edges and in the agency pot', async () => {
