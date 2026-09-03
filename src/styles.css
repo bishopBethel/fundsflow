@@ -16,6 +16,7 @@
   --btn-hover-line: #d4d4d8;
   --shadow: 0 1px 2px rgba(24, 24, 27, 0.05);
   --shadow-lift: 0 4px 12px rgba(24, 24, 27, 0.1);
+  --scrim: rgba(24, 24, 27, 0.32);
   --danger: #dc2626;
   --danger-bg: #fef2f2;
   --radius: 10px;
@@ -44,6 +45,7 @@
   --btn-hover-line: #3f3f46;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-lift: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --scrim: rgba(0, 0, 0, 0.6);
   --danger: #f87171;
   --danger-bg: #2a1416;
 }
@@ -868,4 +870,168 @@ body,
 .summary-warn {
   color: var(--danger);
   font-weight: 500;
+}
+
+/* ---------- modal ---------- */
+
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: var(--scrim);
+}
+
+.modal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 380px;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+}
+
+.modal-card h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-body {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.modal-body strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.modal-field label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+.modal-input {
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  padding: 7px 9px;
+  background: var(--input-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.12s;
+}
+
+.modal-input::placeholder {
+  color: var(--ink-soft);
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.modal-input[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.modal-error {
+  margin: 0;
+  padding: 7px 9px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-radius: var(--radius-sm);
+}
+
+.modal-error:empty {
+  display: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.modal-actions button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.modal-actions button:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-line);
+  color: var(--ink);
+}
+
+.modal-actions button:focus-visible {
+  outline: 1.5px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.modal-actions button:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+/* Amber is the focus colour everywhere else, so the primary action leans on ink
+   instead — and inverts for free in dark mode. */
+.modal-actions .modal-confirm {
+  color: var(--panel);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.modal-actions .modal-confirm:hover:not(:disabled) {
+  color: var(--panel);
+  background: var(--ink-soft);
+  border-color: var(--ink-soft);
+}
+
+.modal-actions .modal-danger {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+}
+
+.modal-actions .modal-danger:hover:not(:disabled) {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: var(--danger);
 }
