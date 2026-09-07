@@ -6,12 +6,13 @@ import { blockFor } from '../config/blockTypes'
 import { formatMoney } from '../lib/format'
 import { useFlowStore } from '../store/useFlowStore'
 import type { FundNode as FundNodeType } from '../types'
-import { useBudget } from './BudgetContext'
+import { useBudget, useFlowView } from './FlowView'
 import { MoneyInput } from './MoneyInput'
 
 export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) => {
   const block = blockFor(data.kind)
   const budget = useBudget(id)
+  const { readOnly } = useFlowView()
   const updateNodeData = useFlowStore((s) => s.updateNodeData)
   const over = budget?.overAllocated ?? false
   const Icon = block.icon
@@ -27,26 +28,36 @@ export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) =
       <div className="fund-node-head">
         <Icon className="fund-node-icon" size={16} strokeWidth={1.75} aria-hidden="true" />
         <div className="fund-node-titles">
-          <input
-            className="fund-node-name nodrag"
-            value={data.label}
-            onChange={(e) => updateNodeData(id, { label: e.target.value })}
-            spellCheck={false}
-          />
+          {readOnly ? (
+            <span className="fund-node-name static">{data.label}</span>
+          ) : (
+            <input
+              className="fund-node-name nodrag"
+              value={data.label}
+              onChange={(e) => updateNodeData(id, { label: e.target.value })}
+              spellCheck={false}
+            />
+          )}
           <span className="fund-node-type">{block.label}</span>
         </div>
       </div>
 
-      {block.role === 'source' && (
-        <label className="fund-node-pot">
-          <span>Starting pot</span>
-          <MoneyInput
-            value={data.pot ?? null}
-            placeholder="$0"
-            onCommit={(v) => updateNodeData(id, { pot: v ?? undefined })}
-          />
-        </label>
-      )}
+      {block.role === 'source' &&
+        (readOnly ? (
+          <div className="fund-node-pot">
+            <span>Starting pot</span>
+            <span className="fund-node-pot-value">{formatMoney(data.pot ?? 0)}</span>
+          </div>
+        ) : (
+          <label className="fund-node-pot">
+            <span>Starting pot</span>
+            <MoneyInput
+              value={data.pot ?? null}
+              placeholder="$0"
+              onCommit={(v) => updateNodeData(id, { pot: v ?? undefined })}
+            />
+          </label>
+        ))}
 
       {budget && (
         <div className="fund-node-chips">

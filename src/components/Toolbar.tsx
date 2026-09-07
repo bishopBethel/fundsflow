@@ -6,17 +6,16 @@ import {
   Moon,
   Plus,
   Satellite,
-  Sparkles,
   Sun,
   Trash2,
   Upload,
 } from 'lucide-react'
 import { exportPng } from '../lib/exportPng'
-import { sampleEdges, sampleNodes } from '../lib/sampleFlow'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import { useTheme } from '../store/useTheme'
 import { ImportAwardDialog } from './ImportAwardDialog'
 import { Modal } from './Modal'
+import { TemplateMenu } from './TemplateMenu'
 import type { FundNode, MoneyEdge } from '../types'
 
 type Dialog =
@@ -101,11 +100,7 @@ export function Toolbar() {
           <button onClick={() => setDialog({ kind: 'confirmDelete' })}>
             <Trash2 size={14} strokeWidth={1.75} aria-hidden="true" /> Delete
           </button>
-          <button
-            onClick={() => loadChartData('Sample: Federal grant journey', sampleNodes, sampleEdges)}
-          >
-            <Sparkles size={14} strokeWidth={1.75} aria-hidden="true" /> Sample
-          </button>
+          <TemplateMenu />
           <button onClick={() => setDialog({ kind: 'importAward' })}>
             <Satellite size={14} strokeWidth={1.75} aria-hidden="true" /> Import award
           </button>

@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { EdgeProps } from '@xyflow/react'
 import { BLOCK_TYPES } from '../config/blockTypes'
 import type { Chart, FundNode, MoneyEdge as MoneyEdgeType } from '../types'
+import { FlowViewContext } from './FlowView'
 
 vi.mock('@xyflow/react', () => ({
   BaseEdge: ({ path, className, style, markerEnd }: Record<string, unknown>) => (
@@ -24,7 +25,6 @@ let chart: Chart = { id: 'c1', name: 'test', nodes: [], edges: [] }
 vi.mock('../store/useFlowStore', () => ({
   useFlowStore: (select: (s: { updateEdgeAmount: () => void }) => unknown) =>
     select({ updateEdgeAmount: () => {} }),
-  useActiveChart: () => chart,
 }))
 
 const { ArrowDefs } = await import('./ArrowDefs')
@@ -51,18 +51,22 @@ const setChart = (nodes: FundNode[], edges: MoneyEdgeType[]) => {
 
 const renderEdge = (e: MoneyEdgeType) =>
   renderToStaticMarkup(
-    <MoneyEdge
-      {...({
-        id: e.id,
-        source: e.source,
-        target: e.target,
-        sourceX: 0,
-        sourceY: 0,
-        targetX: 100,
-        targetY: 100,
-        data: e.data,
-      } as unknown as EdgeProps<MoneyEdgeType>)}
-    />,
+    <FlowViewContext.Provider
+      value={{ nodes: chart.nodes, edges: chart.edges, budgets: new Map(), readOnly: false }}
+    >
+      <MoneyEdge
+        {...({
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          sourceX: 0,
+          sourceY: 0,
+          targetX: 100,
+          targetY: 100,
+          data: e.data,
+        } as unknown as EdgeProps<MoneyEdgeType>)}
+      />
+    </FlowViewContext.Provider>,
   )
 
 const markerEndId = (markup: string) => markup.match(/marker-end="url\(#([^)]+)\)"/)?.[1]

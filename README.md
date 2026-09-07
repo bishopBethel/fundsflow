@@ -39,11 +39,16 @@ Then open http://localhost:5173.
   budget.
 - **Dark mode** — the toolbar's Light/Dark button. It starts on whatever your
   system prefers and remembers what you pick.
+- **Start from a template.** The toolbar's **Templates** button opens a picker
+  with six ready-made maps — FDA drug review, Title I school funding, housing
+  choice vouchers, disaster recovery, an NIH research grant, and the original
+  federal grant journey. Pick one from the list and it previews live on the
+  right, exactly as it will look on the canvas; **Open on canvas** drops it in
+  as a new map you can edit like any other. Your current map is left alone.
 - Charts **auto-save** in your browser (localStorage). Keep multiple named maps
   and switch between them in the toolbar.
 - **Export** any map as JSON or a PNG snapshot, and **Import** a JSON map back
-  in — your own, or one someone shared with you. Try ✨ Sample for a demo
-  federal-grant journey.
+  in — your own, or one someone shared with you.
 - **📡 Import award** builds a map from a real federal award. Type a PIID or
   FAIN (try `N0001919C0001` or `2146755`) and it fetches the award from
   [USAspending.gov](https://api.usaspending.gov), then draws the awarding agency,

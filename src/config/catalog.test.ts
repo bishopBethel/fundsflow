@@ -8,8 +8,6 @@ import {
   SPENDING_ROUTES,
   SPENDING_USES,
 } from './fundingTypes'
-import { computeBudgets } from '../lib/budget'
-import { sampleEdges, sampleNodes } from '../lib/sampleFlow'
 
 const blockKinds = Object.keys(BLOCK_TYPES) as (keyof typeof BLOCK_TYPES)[]
 const fundingIds = Object.keys(FUNDING_TYPES) as (keyof typeof FUNDING_TYPES)[]
@@ -87,30 +85,5 @@ describe('flow qualifiers', () => {
   it('splits what money pays for and how it gets there', () => {
     expect(Object.keys(SPENDING_USES)).toEqual(['programmatic', 'operational'])
     expect(Object.keys(SPENDING_ROUTES)).toEqual(['direct', 'indirect'])
-  })
-})
-
-describe('sample money map', () => {
-  it('only uses blocks, funding types and qualifiers that exist', () => {
-    for (const node of sampleNodes) expect(BLOCK_TYPES[node.data.kind]).toBeDefined()
-    for (const e of sampleEdges) {
-      if (e.data?.fundingType) expect(FUNDING_TYPES[e.data.fundingType]).toBeDefined()
-      if (e.data?.duration) expect(FUNDING_DURATIONS[e.data.duration]).toBeDefined()
-      if (e.data?.spendingUse) expect(SPENDING_USES[e.data.spendingUse]).toBeDefined()
-      if (e.data?.spendingRoute) expect(SPENDING_ROUTES[e.data.spendingRoute]).toBeDefined()
-    }
-  })
-
-  it('connects edges to real nodes', () => {
-    const ids = new Set(sampleNodes.map((n) => n.id))
-    for (const e of sampleEdges) {
-      expect(ids.has(e.source), `${e.id} source`).toBe(true)
-      expect(ids.has(e.target), `${e.id} target`).toBe(true)
-    }
-  })
-
-  it('hands out no more than it takes in, so nothing shows as over budget', () => {
-    const over = [...computeBudgets(sampleNodes, sampleEdges)].filter(([, b]) => b.overAllocated)
-    expect(over.map(([id]) => id)).toEqual([])
   })
 })

@@ -11,8 +11,9 @@ import {
 import { drawableAmount, edgeVisuals, maxEdgeAmount } from '../lib/edgeStyle'
 import { edgeTags } from '../lib/edgeTags'
 import { formatMoney } from '../lib/format'
-import { useActiveChart, useFlowStore } from '../store/useFlowStore'
+import { useFlowStore } from '../store/useFlowStore'
 import type { MoneyEdgeData, MoneyEdge as MoneyEdgeType } from '../types'
+import { useFlowView } from './FlowView'
 import { MoneyInput } from './MoneyInput'
 
 type Choice = { id: string; label: string; short: string; blurb: string }
@@ -89,7 +90,7 @@ export const MoneyEdge = memo(
     const labelRef = useRef<HTMLDivElement>(null)
     const updateEdgeAmount = useFlowStore((s) => s.updateEdgeAmount)
     const updateEdgeData = useFlowStore((s) => s.updateEdgeData)
-    const chart = useActiveChart()
+    const { nodes, edges, readOnly } = useFlowView()
 
     useEffect(() => {
       if (!detailsOpen) return
@@ -101,18 +102,20 @@ export const MoneyEdge = memo(
     }, [detailsOpen])
 
     const amount = drawableAmount(data?.amount)
-    const maxAmount = maxEdgeAmount(chart.edges)
-    const { color, width, markerId } = edgeVisuals(source, amount, chart.nodes, maxAmount)
+    const maxAmount = maxEdgeAmount(edges)
+    const { color, width, markerId } = edgeVisuals(source, amount, nodes, maxAmount)
 
     const patch = (key: keyof MoneyEdgeData) => (value: string) =>
       updateEdgeData(id, { [key]: value || undefined } as Partial<MoneyEdgeData>)
 
     const tags = edgeTags(data)
 
-    const openDetails = (e: React.MouseEvent) => {
-      e.stopPropagation()
-      setDetailsOpen((open) => !open)
-    }
+    const openDetails = readOnly
+      ? undefined
+      : (e: React.MouseEvent) => {
+          e.stopPropagation()
+          setDetailsOpen((open) => !open)
+        }
 
     return (
       <>
@@ -125,16 +128,16 @@ export const MoneyEdge = memo(
         <EdgeLabelRenderer>
           <div
             ref={labelRef}
-            className={`edge-label nodrag nopan ${amount == null ? 'unset' : ''} ${selected ? 'selected' : ''} ${detailsOpen ? 'open' : ''}`}
+            className={`edge-label nodrag nopan ${amount == null ? 'unset' : ''} ${selected ? 'selected' : ''} ${detailsOpen ? 'open' : ''} ${readOnly ? 'static' : ''}`}
             style={{
               '--tx': `${labelX}px`,
               '--ty': `${labelY}px`,
               '--edge-color': color,
             } as React.CSSProperties}
-            onClick={() => setEditing(true)}
+            onClick={readOnly ? undefined : () => setEditing(true)}
           >
             <span className="edge-amount">
-              {editing ? (
+              {editing && !readOnly ? (
                 <MoneyInput
                   value={amount}
                   placeholder="e.g. 250k"
@@ -161,7 +164,7 @@ export const MoneyEdge = memo(
               ))
             )}
 
-            {detailsOpen && (
+            {detailsOpen && !readOnly && (
               <div
                 className="edge-details nodrag nopan nowheel"
                 onClick={(e) => e.stopPropagation()}

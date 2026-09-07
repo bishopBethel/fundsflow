@@ -532,7 +532,12 @@ body,
   width: 100%;
 }
 
-.fund-node-name:hover {
+.fund-node-name.static {
+  display: block;
+  cursor: default;
+}
+
+.fund-node-name:not(.static):hover {
   background: var(--hover-bg);
 }
 
@@ -556,6 +561,12 @@ body,
   font-size: 11.5px;
   font-weight: 500;
   color: var(--ink-soft);
+}
+
+.fund-node-pot-value {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
 }
 
 .fund-node-pot .money-input {
@@ -1034,4 +1045,164 @@ body,
   color: var(--danger);
   background: var(--danger-bg);
   border-color: var(--danger);
+}
+
+/* ---------- templates ---------- */
+
+.template-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.template-trigger.open {
+  background: var(--btn-hover-bg);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.template-chevron {
+  margin-left: -2px;
+  transition: transform 0.12s;
+}
+
+.template-trigger.open .template-chevron {
+  transform: rotate(180deg);
+}
+
+.template-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  cursor: default;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+}
+
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 196px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--line);
+  padding-right: 12px;
+}
+
+.template-list-title {
+  margin: 0 0 6px;
+  padding: 0 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+.template-panel .template-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.template-panel .template-option:hover {
+  background: var(--hover-bg);
+  color: var(--ink);
+}
+
+.template-panel .template-option[aria-selected='true'] {
+  background: var(--hover-bg);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.template-panel .template-option:focus-visible {
+  outline: 1.5px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.template-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 640px;
+}
+
+.template-detail-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.template-detail-blurb {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.template-stage {
+  height: 230px;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.template-detail-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.template-stats {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.template-panel .template-open {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--ink);
+  color: var(--panel);
+  cursor: pointer;
+}
+
+.template-panel .template-open:hover {
+  opacity: 0.88;
+}
+
+.template-hint {
+  margin: 0;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.edge-label.static,
+.edge-label.static .edge-amount,
+.edge-label.static .edge-type {
+  cursor: default;
 }
