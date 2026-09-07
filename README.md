@@ -25,6 +25,9 @@ Then open http://localhost:5173.
 - **Connect blocks** by dragging from a block's right handle to another's left
   handle — animated lines show money flowing. Click a line's pill to set the
   amount (`250k`, `1.5m`, `2b` all work).
+- **Right-click a block** for Duplicate and Delete. Duplicating keeps the label
+  and starting pot you typed and drops the copy just below, ready to drag;
+  deleting takes the block's arrows with it.
 - **Say what kind of money it is.** Open a line's details and tag it with a
   funding type (formula grant, block grant, contract, voucher, earmark,
   indirect cost recovery — 21 in all), how long it stays available (1-year,

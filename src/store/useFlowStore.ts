@@ -19,6 +19,7 @@ type FlowState = {
   onEdgesChange: (changes: EdgeChange<MoneyEdge>[]) => void
   onConnect: (connection: Connection) => void
   addNode: (kind: BlockKind, position: XYPosition) => void
+  duplicateNode: (id: string) => void
   updateNodeData: (id: string, patch: Partial<FundNodeData>) => void
   updateEdgeAmount: (id: string, amount: number | null) => void
   updateEdgeData: (id: string, patch: Partial<MoneyEdgeData>) => void
@@ -28,6 +29,9 @@ type FlowState = {
   deleteChart: (id: string) => void
   loadChartData: (name: string, nodes: FundNode[], edges: MoneyEdge[]) => void
 }
+
+// Enough for the copy to read as one, while still overlapping its original.
+const DUPLICATE_OFFSET = 36
 
 const makeChart = (name: string): Chart => ({
   id: crypto.randomUUID(),
@@ -76,6 +80,25 @@ export const useFlowStore = create<FlowState>()(
               },
             ],
           })),
+
+        duplicateNode: (id) =>
+          patchActive((c) => {
+            const source = c.nodes.find((n) => n.id === id)
+            if (!source) return {}
+            // Built field by field rather than spread, so React Flow's own
+            // bookkeeping never rides along onto a node it has yet to measure.
+            const copy: FundNode = {
+              id: crypto.randomUUID(),
+              type: 'fund',
+              position: {
+                x: source.position.x + DUPLICATE_OFFSET,
+                y: source.position.y + DUPLICATE_OFFSET,
+              },
+              data: { ...source.data },
+              selected: true,
+            }
+            return { nodes: [...c.nodes.map((n) => ({ ...n, selected: false })), copy] }
+          }),
 
         updateNodeData: (id, patch) =>
           patchActive((c) => ({
