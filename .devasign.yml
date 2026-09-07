@@ -1,0 +1,11 @@
+# .devasign.yml — DevAsign verification settings for this repository.
+# verify.start/url tell the runner how to boot the app for end-to-end tests;
+# without them UI criteria are reported as unverifiable (never as failed).
+# e2e: auto | always | never.
+verify:
+  e2e: auto
+  start: npm run dev -- --port 5173
+  url: http://localhost:5173
+  ready: /
+  login:
+    strategy: none
