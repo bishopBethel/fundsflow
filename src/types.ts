@@ -88,6 +88,14 @@ export type Chart = {
   edges: MoneyEdge[]
 }
 
+export type FlowTemplate = {
+  id: string
+  name: string
+  blurb: string
+  nodes: FundNode[]
+  edges: MoneyEdge[]
+}
+
 export type NodeBudget = {
   moneyIn: number
   moneyOut: number

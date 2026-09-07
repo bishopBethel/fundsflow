@@ -1,22 +1,6 @@
 import { columnX } from './layout'
-import type { FundNode, MoneyEdge, MoneyEdgeData } from '../types'
-
-const node = (
-  id: string,
-  kind: FundNode['data']['kind'],
-  label: string,
-  x: number,
-  y: number,
-  pot?: number,
-): FundNode => ({ id, type: 'fund', position: { x, y }, data: { kind, label, pot } })
-
-const edge = (
-  id: string,
-  source: string,
-  target: string,
-  amount: number,
-  tags: Omit<MoneyEdgeData, 'amount'> = {},
-): MoneyEdge => ({ id, source, target, type: 'money', data: { amount, ...tags } })
+import { edge, node } from './templates/build'
+import type { FundNode, MoneyEdge } from '../types'
 
 export const sampleNodes: FundNode[] = [
   node('n1', 'taxpayers', 'U.S. Taxpayers', columnX(0), 210, 12_000_000),

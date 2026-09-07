@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
 import { COLUMN_GAP, COLUMN_STEP, NODE_WIDTH, columnX, readyToFit } from './layout'
-import { sampleNodes } from './sampleFlow'
+import { TEMPLATES } from './templates'
 
 const live = (id: string) => ({ id, measured: { width: NODE_WIDTH } })
 const unmeasured = (id: string) => ({ id })
@@ -17,8 +17,10 @@ describe('column grid', () => {
     expect(COLUMN_GAP).toBeGreaterThanOrEqual(NODE_WIDTH)
   })
 
-  it('lays the sample out on that same grid', () => {
-    for (const node of sampleNodes) expect(node.position.x % COLUMN_STEP).toBe(0)
+  it('lays every template out on that same grid', () => {
+    for (const t of TEMPLATES) {
+      for (const node of t.nodes) expect(node.position.x % COLUMN_STEP, t.name).toBe(0)
+    }
   })
 })
 

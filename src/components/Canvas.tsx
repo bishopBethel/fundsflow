@@ -17,7 +17,7 @@ import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import { useTheme } from '../store/useTheme'
 import type { BlockKind, FundNode as FundNodeType, MoneyEdge as MoneyEdgeType } from '../types'
 import { ArrowDefs } from './ArrowDefs'
-import { BudgetContext } from './BudgetContext'
+import { FlowViewContext } from './FlowView'
 import { FundNode } from './FundNode'
 import { MoneyEdge } from './MoneyEdge'
 import { SummaryBar } from './SummaryBar'
@@ -41,7 +41,15 @@ export function Canvas() {
   const nodesInitialized = useNodesInitialized()
   const fittedChartRef = useRef<string | null>(null)
 
-  const budgets = useMemo(() => computeBudgets(chart.nodes, chart.edges), [chart.nodes, chart.edges])
+  const view = useMemo(
+    () => ({
+      nodes: chart.nodes,
+      edges: chart.edges,
+      budgets: computeBudgets(chart.nodes, chart.edges),
+      readOnly: false,
+    }),
+    [chart.nodes, chart.edges],
+  )
 
   useEffect(() => {
     if (fittedChartRef.current === chart.id) return
@@ -67,7 +75,7 @@ export function Canvas() {
   )
 
   return (
-    <BudgetContext.Provider value={budgets}>
+    <FlowViewContext.Provider value={view}>
       <div className="canvas-wrap">
         <ReactFlow<FundNodeType, MoneyEdgeType>
           nodes={chart.nodes}
@@ -112,13 +120,14 @@ export function Canvas() {
               <h2>Build your money map</h2>
               <p>
                 Drag a block in from the left to get started — then draw lines between blocks to
-                show money flowing. Try <strong>Sample</strong> up top to see one in action.
+                show money flowing. Or open <strong>Templates</strong> up top and start from a
+                map that already works.
               </p>
             </div>
           </div>
         )}
-        <SummaryBar nodes={chart.nodes} edges={chart.edges} budgets={budgets} />
+        <SummaryBar nodes={chart.nodes} edges={chart.edges} budgets={view.budgets} />
       </div>
-    </BudgetContext.Provider>
+    </FlowViewContext.Provider>
   )
 }
