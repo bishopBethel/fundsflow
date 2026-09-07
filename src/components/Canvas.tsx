@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Background,
   BackgroundVariant,
@@ -13,6 +13,7 @@ import { Waypoints } from 'lucide-react'
 import { BLOCK_TYPES, blockFor } from '../config/blockTypes'
 import { computeBudgets } from '../lib/budget'
 import { readyToFit } from '../lib/layout'
+import { anchorMenu } from '../lib/menuAnchor'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import { useTheme } from '../store/useTheme'
 import type { BlockKind, FundNode as FundNodeType, MoneyEdge as MoneyEdgeType } from '../types'
@@ -20,6 +21,7 @@ import { ArrowDefs } from './ArrowDefs'
 import { FlowViewContext } from './FlowView'
 import { FundNode } from './FundNode'
 import { MoneyEdge } from './MoneyEdge'
+import { NodeContextMenu } from './NodeContextMenu'
 import { SummaryBar } from './SummaryBar'
 
 const nodeTypes = { fund: FundNode }
@@ -36,10 +38,13 @@ export function Canvas() {
   const onEdgesChange = useFlowStore((s) => s.onEdgesChange)
   const onConnect = useFlowStore((s) => s.onConnect)
   const addNode = useFlowStore((s) => s.addNode)
+  const duplicateNode = useFlowStore((s) => s.duplicateNode)
   const theme = useTheme((s) => s.theme)
-  const { screenToFlowPosition, fitView, getNodes } = useReactFlow()
+  const { screenToFlowPosition, fitView, getNodes, deleteElements } = useReactFlow()
   const nodesInitialized = useNodesInitialized()
   const fittedChartRef = useRef<string | null>(null)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const [menu, setMenu] = useState<{ x: number; y: number; nodeId: string } | null>(null)
 
   const view = useMemo(
     () => ({
@@ -74,9 +79,20 @@ export function Canvas() {
     [screenToFlowPosition, addNode],
   )
 
+  // React Flow hands the event through untouched, so the browser's own menu is ours to suppress.
+  const onNodeContextMenu = useCallback((e: React.MouseEvent, node: FundNodeType) => {
+    e.preventDefault()
+    const wrap = wrapRef.current?.getBoundingClientRect()
+    if (!wrap) return
+    const at = anchorMenu({ x: e.clientX - wrap.left, y: e.clientY - wrap.top }, wrap)
+    setMenu({ ...at, nodeId: node.id })
+  }, [])
+
+  const closeMenu = useCallback(() => setMenu(null), [])
+
   return (
     <FlowViewContext.Provider value={view}>
-      <div className="canvas-wrap">
+      <div className="canvas-wrap" ref={wrapRef}>
         <ReactFlow<FundNodeType, MoneyEdgeType>
           nodes={chart.nodes}
           edges={chart.edges}
@@ -90,6 +106,10 @@ export function Canvas() {
             e.preventDefault()
             e.dataTransfer.dropEffect = 'move'
           }}
+          onNodeContextMenu={onNodeContextMenu}
+          onPaneClick={closeMenu}
+          onNodeDragStart={closeMenu}
+          onMoveStart={closeMenu}
           isValidConnection={isValidConnection}
           connectionLineStyle={{ stroke: '#f59e0b', strokeWidth: 1.5, strokeDasharray: '6 4' }}
           deleteKeyCode={['Backspace', 'Delete']}
@@ -125,6 +145,15 @@ export function Canvas() {
               </p>
             </div>
           </div>
+        )}
+        {menu && (
+          <NodeContextMenu
+            x={menu.x}
+            y={menu.y}
+            onDuplicate={() => duplicateNode(menu.nodeId)}
+            onDelete={() => deleteElements({ nodes: [{ id: menu.nodeId }] })}
+            onClose={closeMenu}
+          />
         )}
         <SummaryBar nodes={chart.nodes} edges={chart.edges} budgets={view.budgets} />
       </div>
