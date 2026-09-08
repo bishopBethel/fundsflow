@@ -128,7 +128,7 @@ export const MoneyEdge = memo(
         <EdgeLabelRenderer>
           <div
             ref={labelRef}
-            className={`edge-label nodrag nopan ${amount == null ? 'unset' : ''} ${selected ? 'selected' : ''} ${detailsOpen ? 'open' : ''} ${readOnly ? 'static' : ''}`}
+            className={`edge-label nodrag nopan ${amount == null ? 'unset' : ''} ${tinted ? 'tinted' : ''} ${selected ? 'selected' : ''} ${detailsOpen ? 'open' : ''} ${readOnly ? 'static' : ''}`}
             style={{
               '--tx': `${labelX}px`,
               '--ty': `${labelY}px`,

@@ -15,7 +15,7 @@ vi.mock('@xyflow/react', () => ({
       markerEnd={markerEnd as string}
     />
   ),
-  EdgeLabelRenderer: () => null,
+  EdgeLabelRenderer: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   ViewportPortal: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   getBezierPath: () => ['M 0 0 L 100 100', 50, 50],
 }))
@@ -161,6 +161,8 @@ describe('edge arrowheads', () => {
       expect(markup, e.id).not.toContain(BLOCK_TYPES.foundation.color)
       // .tinted is what lifts the colour off hover-only and onto the resting stroke.
       expect(markup, e.id).toMatch(/class="money-edge[^"]*\btinted\b/)
+      // The amount pill rides the same colour, so it reads as part of its line.
+      expect(markup, e.id).toMatch(/class="edge-label[^"]*\btinted\b/)
       expect(markup, e.id).not.toMatch(/[^-]stroke:/)
     }
 
