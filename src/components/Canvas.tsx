@@ -12,12 +12,14 @@ import type { IsValidConnection } from '@xyflow/react'
 import { Waypoints } from 'lucide-react'
 import { BLOCK_TYPES, blockFor } from '../config/blockTypes'
 import { computeBudgets } from '../lib/budget'
+import { sharedTint } from '../lib/edgeStyle'
 import { readyToFit } from '../lib/layout'
 import { anchorMenu } from '../lib/menuAnchor'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
 import { useTheme } from '../store/useTheme'
 import type { BlockKind, FundNode as FundNodeType, MoneyEdge as MoneyEdgeType } from '../types'
 import { ArrowDefs } from './ArrowDefs'
+import { EdgeColorBar } from './EdgeColorBar'
 import { FlowViewContext } from './FlowView'
 import { FundNode } from './FundNode'
 import { MoneyEdge } from './MoneyEdge'
@@ -39,12 +41,15 @@ export function Canvas() {
   const onConnect = useFlowStore((s) => s.onConnect)
   const addNode = useFlowStore((s) => s.addNode)
   const duplicateNode = useFlowStore((s) => s.duplicateNode)
+  const setEdgeColor = useFlowStore((s) => s.setEdgeColor)
   const theme = useTheme((s) => s.theme)
   const { screenToFlowPosition, fitView, getNodes, deleteElements } = useReactFlow()
   const nodesInitialized = useNodesInitialized()
   const fittedChartRef = useRef<string | null>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
   const [menu, setMenu] = useState<{ x: number; y: number; nodeId: string } | null>(null)
+
+  const picked = useMemo(() => chart.edges.filter((e) => e.selected), [chart.edges])
 
   const view = useMemo(
     () => ({
@@ -155,7 +160,16 @@ export function Canvas() {
             onClose={closeMenu}
           />
         )}
-        <SummaryBar nodes={chart.nodes} edges={chart.edges} budgets={view.budgets} />
+        <div className="canvas-dock">
+          {picked.length > 0 && (
+            <EdgeColorBar
+              count={picked.length}
+              color={sharedTint(picked)}
+              onPick={(color) => setEdgeColor(picked.map((e) => e.id), color)}
+            />
+          )}
+          <SummaryBar nodes={chart.nodes} edges={chart.edges} budgets={view.budgets} />
+        </div>
       </div>
     </FlowViewContext.Provider>
   )

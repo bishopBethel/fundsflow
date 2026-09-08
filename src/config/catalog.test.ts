@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
 import { BLOCK_TYPES, PALETTE_GROUPS, blockFor } from './blockTypes'
+import { EDGE_COLORS } from './edgeColors'
 import {
   FUNDING_DURATIONS,
   FUNDING_TYPES,
@@ -85,5 +86,18 @@ describe('flow qualifiers', () => {
   it('splits what money pays for and how it gets there', () => {
     expect(Object.keys(SPENDING_USES)).toEqual(['programmatic', 'operational'])
     expect(Object.keys(SPENDING_ROUTES)).toEqual(['direct', 'indirect'])
+  })
+})
+
+describe('line colour presets', () => {
+  it('offers eight distinct colours, every one of them already a block colour', () => {
+    const blockColors = new Set(blockKinds.map((k) => BLOCK_TYPES[k].color))
+    expect(EDGE_COLORS).toHaveLength(8)
+    expect(new Set(EDGE_COLORS.map((c) => c.color)).size).toBe(8)
+    expect(new Set(EDGE_COLORS.map((c) => c.name)).size).toBe(8)
+    for (const preset of EDGE_COLORS) {
+      expect(blockColors, preset.name).toContain(preset.color)
+      expect(preset.color, preset.name).toMatch(/^#[0-9a-f]{6}$/)
+    }
   })
 })

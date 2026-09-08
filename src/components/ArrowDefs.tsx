@@ -11,7 +11,7 @@ export const ArrowDefs = memo(({ nodes, edges }: Props) => {
   const maxAmount = maxEdgeAmount(edges)
   const markers = new Map<string, number>()
   for (const edge of edges) {
-    const { arrow, markerId } = edgeVisuals(edge.source, edge.data?.amount ?? null, nodes, maxAmount)
+    const { arrow, markerId } = edgeVisuals(edge.source, edge.data, nodes, maxAmount)
     markers.set(markerId, arrow)
   }
 

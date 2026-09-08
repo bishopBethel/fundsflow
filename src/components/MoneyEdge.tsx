@@ -103,7 +103,7 @@ export const MoneyEdge = memo(
 
     const amount = drawableAmount(data?.amount)
     const maxAmount = maxEdgeAmount(edges)
-    const { color, width, markerId } = edgeVisuals(source, amount, nodes, maxAmount)
+    const { color, tinted, width, markerId } = edgeVisuals(source, data, nodes, maxAmount)
 
     const patch = (key: keyof MoneyEdgeData) => (value: string) =>
       updateEdgeData(id, { [key]: value || undefined } as Partial<MoneyEdgeData>)
@@ -121,7 +121,7 @@ export const MoneyEdge = memo(
       <>
         <BaseEdge
           path={edgePath}
-          className={amount == null ? 'money-edge sketch' : 'money-edge'}
+          className={`money-edge${amount == null ? ' sketch' : ''}${tinted ? ' tinted' : ''}`}
           style={{ '--edge-color': color, strokeWidth: width } as React.CSSProperties}
           markerEnd={`url(#${markerId})`}
         />

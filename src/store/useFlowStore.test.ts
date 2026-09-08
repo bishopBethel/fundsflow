@@ -117,3 +117,48 @@ describe('duplicating a block', () => {
     expect(activeChart().nodes).toHaveLength(2)
   })
 })
+
+describe('recolouring lines', () => {
+  const seedPair = (a: MoneyEdge['data'], b: MoneyEdge['data']) => {
+    const edges: MoneyEdge[] = [
+      { id: 'e1', type: 'money', source: 'a', target: 'b', data: a },
+      { id: 'e2', type: 'money', source: 'b', target: 'a', data: b },
+    ]
+    useFlowStore.getState().loadChartData('test map', nodes, edges)
+  }
+  const edgeById = (id: string) => activeChart().edges.find((e) => e.id === id)!
+
+  it('colours every named line in one pass and leaves the rest grey', () => {
+    seedPair({ amount: 100 }, { amount: 200 })
+    useFlowStore.getState().setEdgeColor(['e1'], '#e11d48')
+    expect(edgeById('e1').data?.color).toBe('#e11d48')
+    expect(edgeById('e2').data?.color).toBeUndefined()
+  })
+
+  it('colours a whole selection at once', () => {
+    seedPair({ amount: 100 }, { amount: 200 })
+    useFlowStore.getState().setEdgeColor(['e1', 'e2'], '#2563eb')
+    expect([edgeById('e1').data?.color, edgeById('e2').data?.color]).toEqual([
+      '#2563eb',
+      '#2563eb',
+    ])
+  })
+
+  it('keeps the amount and the funding tags when the colour changes', () => {
+    seed({ amount: 100_000, fundingType: 'formula', duration: 'multiYear' })
+    useFlowStore.getState().setEdgeColor(['e1'], '#16a34a')
+    expect(seededEdge().data).toEqual({
+      amount: 100_000,
+      fundingType: 'formula',
+      duration: 'multiYear',
+      color: '#16a34a',
+    })
+  })
+
+  it('drops the colour key entirely on reset, so an exported file carries no leftovers', () => {
+    seed({ amount: 100_000, fundingType: 'formula', color: '#16a34a' })
+    useFlowStore.getState().setEdgeColor(['e1'], null)
+    expect(seededEdge().data).toEqual({ amount: 100_000, fundingType: 'formula' })
+    expect(Object.keys(seededEdge().data!)).not.toContain('color')
+  })
+})

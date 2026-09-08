@@ -23,6 +23,7 @@ type FlowState = {
   updateNodeData: (id: string, patch: Partial<FundNodeData>) => void
   updateEdgeAmount: (id: string, amount: number | null) => void
   updateEdgeData: (id: string, patch: Partial<MoneyEdgeData>) => void
+  setEdgeColor: (ids: string[], color: string | null) => void
   newChart: (name?: string) => void
   renameChart: (name: string) => void
   switchChart: (id: string) => void
@@ -120,6 +121,21 @@ export const useFlowStore = create<FlowState>()(
               e.id === id ? { ...e, data: { amount: null, ...e.data, ...patch } } : e,
             ),
           })),
+
+        // One pass rather than a call per edge, so recolouring a whole
+        // selection is a single store write.
+        setEdgeColor: (ids, color) =>
+          patchActive((c) => {
+            const wanted = new Set(ids)
+            return {
+              edges: c.edges.map((e) => {
+                if (!wanted.has(e.id)) return e
+                // Dropped rather than set to undefined, so a reset leaves no key behind in exported JSON.
+                const { color: _cleared, ...rest } = e.data ?? { amount: null }
+                return { ...e, data: color == null ? rest : { ...rest, color } }
+              }),
+            }
+          }),
 
         newChart: (name) => {
           const chart = makeChart(name ?? `Money map ${get().charts.length + 1}`)

@@ -62,7 +62,8 @@
 }
 
 .money-edge,
-.edge-label {
+.edge-label,
+.edge-color-swatch {
   --edge-ink: var(--edge-color);
 }
 
@@ -72,7 +73,8 @@
 }
 
 :root[data-theme='dark'] .money-edge,
-:root[data-theme='dark'] .edge-label {
+:root[data-theme='dark'] .edge-label,
+:root[data-theme='dark'] .edge-color-swatch {
   --edge-ink: color-mix(in srgb, var(--edge-color) 55%, #ffffff);
 }
 
@@ -672,6 +674,13 @@ body,
   stroke-linecap: round;
 }
 
+/* A picked colour is a standing instruction, so it holds at rest too. Listed
+   twice to outrank .sketch on specificity rather than on source order. */
+.money-edge.tinted,
+.money-edge.sketch.tinted {
+  stroke: var(--edge-ink);
+}
+
 .react-flow__edge:hover .money-edge,
 .react-flow__edge.selected .money-edge {
   stroke: var(--edge-ink);
@@ -846,13 +855,121 @@ body,
   color: var(--ink);
 }
 
-/* ---------- summary bar ---------- */
+/* ---------- canvas dock ---------- */
 
-.summary-bar {
+/* Anchored at the bottom and stacking upward, so the summary bar holds still
+   whether or not the colour pill is showing. */
+.canvas-dock {
   position: absolute;
   left: 50%;
   bottom: 14px;
   transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  /* The gap between the pills would otherwise swallow pane clicks and box drags. */
+  pointer-events: none;
+}
+
+.canvas-dock > * {
+  pointer-events: auto;
+}
+
+.edge-color-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  padding: 6px 8px 6px 14px;
+  box-shadow: var(--shadow-lift);
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.edge-color-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.edge-color-swatches {
+  display: flex;
+  gap: 5px;
+}
+
+.edge-color-swatch {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--edge-ink);
+  cursor: pointer;
+}
+
+.edge-color-swatch[aria-checked='true'] {
+  box-shadow: 0 0 0 2px var(--panel), 0 0 0 3.5px var(--edge-ink);
+}
+
+.edge-color-swatch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.edge-color-wheel-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.edge-color-wheel-label:hover {
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-line);
+}
+
+/* The native swatch is the hit target; the pipette above it is what reads. */
+.edge-color-wheel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.edge-color-reset {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--panel);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.edge-color-reset:hover {
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-line);
+  color: var(--ink);
+}
+
+/* ---------- summary bar ---------- */
+
+.summary-bar {
   display: flex;
   gap: 16px;
   align-items: center;
@@ -864,7 +981,6 @@ body,
   font-size: 12px;
   color: var(--ink-soft);
   white-space: nowrap;
-  z-index: 6;
 }
 
 .summary-stat {
