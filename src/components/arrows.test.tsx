@@ -37,12 +37,17 @@ const node = (id: string, kind: FundNode['data']['kind']): FundNode => ({
   data: { kind, label: id },
 })
 
-const edge = (id: string, source: string, amount: number | null): MoneyEdgeType => ({
+const edge = (
+  id: string,
+  source: string,
+  amount: number | null,
+  color?: string,
+): MoneyEdgeType => ({
   id,
   type: 'money',
   source,
   target: 'ngo',
-  data: { amount },
+  data: { amount, color },
 })
 
 const setChart = (nodes: FundNode[], edges: MoneyEdgeType[]) => {
@@ -142,6 +147,25 @@ describe('edge arrowheads', () => {
       // A NaN amount used to reach the SMIL animation as dur="NaNs".
       expect(markup, `edge ${e.id}`).not.toContain('NaN')
     }
+  })
+
+  it('wears a picked colour at rest, and still leaves no inline stroke for PNG export to lose', () => {
+    setChart(
+      [node('foundation', 'foundation'), node('ngo', 'ngo')],
+      [edge('e1', 'foundation', 500, '#e11d48'), edge('e2', 'foundation', null, '#e11d48')],
+    )
+
+    for (const e of chart.edges) {
+      const markup = renderEdge(e)
+      expect(markup, e.id).toContain('--edge-color:#e11d48')
+      expect(markup, e.id).not.toContain(BLOCK_TYPES.foundation.color)
+      // .tinted is what lifts the colour off hover-only and onto the resting stroke.
+      expect(markup, e.id).toMatch(/class="money-edge[^"]*\btinted\b/)
+      expect(markup, e.id).not.toMatch(/[^-]stroke:/)
+    }
+
+    // The unset edge keeps its dashed sketch look on top of the colour.
+    expect(renderEdge(chart.edges[1])).toMatch(/class="money-edge[^"]*\bsketch\b/)
   })
 
   it('shares one marker between every edge that arrives at the same size', () => {

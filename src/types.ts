@@ -72,6 +72,7 @@ export type FundNodeData = {
 
 export type MoneyEdgeData = {
   amount: number | null
+  color?: string
   fundingType?: FundingType
   duration?: FundingDuration
   spendingUse?: SpendingUse
