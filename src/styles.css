@@ -714,6 +714,13 @@ body,
   border-color: var(--dash-line);
 }
 
+/* A picked colour holds on the pill the same way it holds on the line, so the
+   label reads as part of its arrow rather than floating loose on top of it. */
+.edge-label.tinted,
+.edge-label.tinted:hover {
+  border-color: var(--edge-ink);
+}
+
 .edge-label.open {
   z-index: 10;
 }
