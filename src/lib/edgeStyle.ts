@@ -20,6 +20,26 @@ const HEX = /^#[0-9a-f]{6}$/i
 
 export const edgeTint = (color: string | undefined) => (color && HEX.test(color) ? color : null)
 
+// The stylesheet's two --ink values: a filled chip gets whichever survives on it.
+const CHIP_INK = { dark: '#18181b', light: '#fafafa' }
+
+const channel = (v: number) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+
+function luminance(hex: string) {
+  const [r, g, b] = [1, 3, 5].map((i) => channel(parseInt(hex.slice(i, i + 2), 16) / 255))
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+
+export function readableInk(color: string) {
+  if (!HEX.test(color)) return CHIP_INK.dark
+  const bg = luminance(color)
+  return contrast(bg, luminance(CHIP_INK.dark)) >= contrast(bg, luminance(CHIP_INK.light))
+    ? CHIP_INK.dark
+    : CHIP_INK.light
+}
+
 // Null when the edges disagree, so a mixed selection preselects no swatch.
 export function sharedTint(edges: MoneyEdge[]) {
   const first = edgeTint(edges[0]?.data?.color)
@@ -52,5 +72,12 @@ export function edgeVisuals(
   const color = tint ?? BLOCK_TYPES[sourceNode?.data.kind as BlockKind]?.color ?? SKETCH_COLOR
   const width = drawable == null ? 1 : 1 + 1.5 * Math.sqrt(usableAmount(drawable) / maxAmount)
   const arrow = arrowSize(width)
-  return { color, tinted: tint != null, width, arrow, markerId: arrowMarkerId(arrow) }
+  return {
+    color,
+    onColor: readableInk(color),
+    tinted: tint != null,
+    width,
+    arrow,
+    markerId: arrowMarkerId(arrow),
+  }
 }
