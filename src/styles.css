@@ -806,6 +806,26 @@ body,
   border-color: var(--line);
 }
 
+/* A picked colour fills the chips too, so the pill's status belongs to its line.
+   The outline is --edge-ink, so a near-black pick still shows on a dark panel. */
+.edge-label.tinted .edge-type {
+  color: var(--edge-on-ink);
+  background: var(--edge-color);
+  border-color: var(--edge-ink);
+}
+
+.edge-label.tinted .edge-type:hover {
+  color: var(--edge-on-ink);
+  border-color: var(--edge-on-ink);
+}
+
+/* "Type" is a prompt rather than a status, so it stays dashed and uncoloured. */
+.edge-label.tinted .edge-type.unset {
+  color: var(--ink-soft);
+  background: transparent;
+  border-color: var(--edge-ink);
+}
+
 .edge-label .money-input {
   width: 86px;
   border: none;

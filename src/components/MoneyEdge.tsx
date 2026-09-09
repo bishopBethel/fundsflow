@@ -103,7 +103,7 @@ export const MoneyEdge = memo(
 
     const amount = drawableAmount(data?.amount)
     const maxAmount = maxEdgeAmount(edges)
-    const { color, tinted, width, markerId } = edgeVisuals(source, data, nodes, maxAmount)
+    const { color, onColor, tinted, width, markerId } = edgeVisuals(source, data, nodes, maxAmount)
 
     const patch = (key: keyof MoneyEdgeData) => (value: string) =>
       updateEdgeData(id, { [key]: value || undefined } as Partial<MoneyEdgeData>)
@@ -133,6 +133,7 @@ export const MoneyEdge = memo(
               '--tx': `${labelX}px`,
               '--ty': `${labelY}px`,
               '--edge-color': color,
+              '--edge-on-ink': onColor,
             } as React.CSSProperties}
             onClick={readOnly ? undefined : () => setEditing(true)}
           >
