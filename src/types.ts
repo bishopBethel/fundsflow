@@ -64,6 +64,9 @@ export type SpendingRoute = 'direct' | 'indirect'
 
 export type BlockRole = 'source' | 'vehicle' | 'recipient'
 
+// How a line is drawn between two blocks: a curve, or right-angled corners.
+export type EdgeShape = 'curved' | 'sharp'
+
 export type FundNodeData = {
   kind: BlockKind
   label: string
@@ -73,6 +76,7 @@ export type FundNodeData = {
 export type MoneyEdgeData = {
   amount: number | null
   color?: string
+  shape?: EdgeShape
   fundingType?: FundingType
   duration?: FundingDuration
   spendingUse?: SpendingUse

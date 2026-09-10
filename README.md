@@ -25,6 +25,10 @@ Then open http://localhost:5173.
 - **Connect blocks** by dragging from a block's right handle to another's left
   handle — animated lines show money flowing. Click a line's pill to set the
   amount (`250k`, `1.5m`, `2b` all work).
+- **Restyle a line** by selecting it — a bar rises above the running total with
+  eight colours, a colour wheel, a reset, and a shape toggle that switches the
+  line between a curve and square corners. Select several lines and it restyles
+  them all at once.
 - **Right-click a block** for Duplicate and Delete. Duplicating keeps the label
   and starting pot you typed and drops the copy just below, ready to drag;
   deleting takes the block's arrows with it.

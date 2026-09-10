@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 import type { EdgeProps } from '@xyflow/react'
 import { BLOCK_TYPES } from '../config/blockTypes'
-import type { Chart, FundNode, MoneyEdge as MoneyEdgeType } from '../types'
+import type { Chart, EdgeShape, FundNode, MoneyEdge as MoneyEdgeType } from '../types'
 import { FlowViewContext } from './FlowView'
 
 vi.mock('@xyflow/react', () => ({
@@ -17,7 +17,12 @@ vi.mock('@xyflow/react', () => ({
   ),
   EdgeLabelRenderer: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   ViewportPortal: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  getBezierPath: () => ['M 0 0 L 100 100', 50, 50],
+  getBezierPath: () => ['M bezier', 50, 50],
+  getSmoothStepPath: ({ borderRadius }: { borderRadius: number }) => [
+    `M step r${borderRadius}`,
+    50,
+    50,
+  ],
 }))
 
 let chart: Chart = { id: 'c1', name: 'test', nodes: [], edges: [] }
@@ -42,12 +47,14 @@ const edge = (
   source: string,
   amount: number | null,
   color?: string,
+  // Loose, so a test can hand in the nonsense an imported file might carry.
+  shape?: string,
 ): MoneyEdgeType => ({
   id,
   type: 'money',
   source,
   target: 'ngo',
-  data: { amount, color },
+  data: { amount, color, shape: shape as EdgeShape | undefined },
 })
 
 const setChart = (nodes: FundNode[], edges: MoneyEdgeType[]) => {
@@ -177,5 +184,28 @@ describe('edge arrowheads', () => {
     )
     const defs = renderToStaticMarkup(<ArrowDefs nodes={chart.nodes} edges={chart.edges} />)
     expect(defs.match(/<marker/g)).toHaveLength(1)
+  })
+})
+
+describe('the shape a line is drawn in', () => {
+  const drawn = (shape?: string) => {
+    setChart(
+      [node('federal', 'federal'), node('ngo', 'ngo')],
+      [edge('e1', 'federal', 500, undefined, shape)],
+    )
+    return renderEdge(chart.edges[0]).match(/ d="([^"]+)"/)?.[1]
+  }
+
+  it('curves when nobody has said otherwise', () => {
+    expect(drawn()).toBe('M bezier')
+    expect(drawn('curved')).toBe('M bezier')
+  })
+
+  it('turns square corners when the line was set sharp', () => {
+    expect(drawn('sharp')).toBe('M step r0')
+  })
+
+  it('curves rather than throwing when an imported file invents a shape', () => {
+    expect(drawn('squiggle')).toBe('M bezier')
   })
 })

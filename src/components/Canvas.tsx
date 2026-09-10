@@ -12,7 +12,7 @@ import type { IsValidConnection } from '@xyflow/react'
 import { Waypoints } from 'lucide-react'
 import { BLOCK_TYPES, blockFor } from '../config/blockTypes'
 import { computeBudgets } from '../lib/budget'
-import { sharedTint } from '../lib/edgeStyle'
+import { sharedShape, sharedTint } from '../lib/edgeStyle'
 import { readyToFit } from '../lib/layout'
 import { anchorMenu } from '../lib/menuAnchor'
 import { useActiveChart, useFlowStore } from '../store/useFlowStore'
@@ -42,6 +42,7 @@ export function Canvas() {
   const addNode = useFlowStore((s) => s.addNode)
   const duplicateNode = useFlowStore((s) => s.duplicateNode)
   const setEdgeColor = useFlowStore((s) => s.setEdgeColor)
+  const setEdgeShape = useFlowStore((s) => s.setEdgeShape)
   const theme = useTheme((s) => s.theme)
   const { screenToFlowPosition, fitView, getNodes, deleteElements } = useReactFlow()
   const nodesInitialized = useNodesInitialized()
@@ -165,7 +166,9 @@ export function Canvas() {
             <EdgeColorBar
               count={picked.length}
               color={sharedTint(picked)}
+              shape={sharedShape(picked)}
               onPick={(color) => setEdgeColor(picked.map((e) => e.id), color)}
+              onShape={(shape) => setEdgeShape(picked.map((e) => e.id), shape)}
             />
           )}
           <SummaryBar nodes={chart.nodes} edges={chart.edges} budgets={view.budgets} />

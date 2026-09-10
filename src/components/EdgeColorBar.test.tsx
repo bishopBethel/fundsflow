@@ -7,12 +7,17 @@ import { EDGE_COLORS } from '../config/edgeColors'
 import { EdgeColorBar } from './EdgeColorBar'
 
 const onPick = vi.fn()
+const onShape = vi.fn()
 
 let container: HTMLDivElement
 let root: Root
 
 const q = (sel: string) => container.querySelector<HTMLElement>(sel)
-const swatches = () => [...container.querySelectorAll<HTMLElement>('[role=radio]')]
+const radios = (group: string) =>
+  [...container.querySelectorAll<HTMLElement>(`${group} [role=radio]`)]
+const swatches = () => radios('.edge-color-swatches')
+const shapes = () => radios('.edge-shapes')
+const shaped = (name: string) => shapes().find((s) => s.getAttribute('aria-label') === name)!
 const named = (name: string) => swatches().find((s) => s.getAttribute('aria-label') === name)!
 const checked = () => swatches().filter((s) => s.getAttribute('aria-checked') === 'true')
 
@@ -28,11 +33,21 @@ const press = (el: HTMLElement, key: string) =>
 
 const show = (props: Partial<Parameters<typeof EdgeColorBar>[0]> = {}) =>
   act(() => {
-    root.render(<EdgeColorBar count={1} color={null} onPick={onPick} {...props} />)
+    root.render(
+      <EdgeColorBar
+        count={1}
+        color={null}
+        shape="curved"
+        onPick={onPick}
+        onShape={onShape}
+        {...props}
+      />,
+    )
   })
 
 beforeEach(() => {
   onPick.mockClear()
+  onShape.mockClear()
   // act() refuses to run without this flag, and React only declares it for its own test build.
   ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
   container = document.createElement('div')
@@ -46,7 +61,7 @@ afterEach(() => {
   container.remove()
 })
 
-describe('the line colour bar', () => {
+describe('the line style bar', () => {
   it('offers every preset, a colour wheel and a reset, each named for a screen reader', () => {
     expect(swatches().map((s) => s.getAttribute('aria-label'))).toEqual(
       EDGE_COLORS.map((c) => c.name),
@@ -54,7 +69,7 @@ describe('the line colour bar', () => {
     expect(q('.edge-color-wheel')?.getAttribute('type')).toBe('color')
     expect(q('.edge-color-wheel')?.getAttribute('aria-label')).toBeTruthy()
     expect(q('.edge-color-reset')?.textContent).toBe('Reset')
-    expect(q('[role=group]')?.getAttribute('aria-label')).toBe('Line colour')
+    expect(q('[role=group]')?.getAttribute('aria-label')).toBe('Line style')
   })
 
   it('checks the swatch the selected lines already share', () => {
@@ -111,5 +126,47 @@ describe('the line colour bar', () => {
     expect(q('.edge-color-count')?.textContent).toBe('1 line')
     show({ count: 3 })
     expect(q('.edge-color-count')?.textContent).toBe('3 lines')
+  })
+
+  it('offers both line shapes, and checks the one the selected lines share', () => {
+    expect(shapes().map((s) => s.getAttribute('aria-label'))).toEqual(['Curved', 'Sharp'])
+    expect(shapes().filter((s) => s.getAttribute('aria-checked') === 'true')).toHaveLength(1)
+    expect(shaped('Curved').getAttribute('aria-checked')).toBe('true')
+
+    show({ shape: 'sharp' })
+    expect(shaped('Sharp').getAttribute('aria-checked')).toBe('true')
+    expect(shaped('Curved').getAttribute('aria-checked')).toBe('false')
+  })
+
+  it('checks neither shape when the selected lines disagree', () => {
+    show({ shape: null })
+    expect(shapes().filter((s) => s.getAttribute('aria-checked') === 'true')).toHaveLength(0)
+  })
+
+  it('hands the picked shape up, without touching the colour', () => {
+    click(shaped('Sharp'))
+    expect(onShape).toHaveBeenCalledWith('sharp')
+    expect(onPick).not.toHaveBeenCalled()
+
+    show({ shape: 'sharp' })
+    click(shaped('Curved'))
+    expect(onShape).toHaveBeenLastCalledWith('curved')
+  })
+
+  it('walks the shapes with the arrow keys, without stepping into the swatches', () => {
+    shaped('Curved').focus()
+    press(shaped('Curved'), 'ArrowRight')
+    expect(document.activeElement).toBe(shaped('Sharp'))
+    expect(onShape).toHaveBeenLastCalledWith('sharp')
+
+    press(shaped('Sharp'), 'ArrowRight')
+    expect(document.activeElement).toBe(shaped('Curved'))
+  })
+
+  it('keeps one shape in the tab order, so Tab leaves the row in a single press', () => {
+    show({ shape: 'sharp' })
+    const reachable = shapes().filter((s) => s.tabIndex === 0)
+    expect(reachable).toHaveLength(1)
+    expect(reachable[0].getAttribute('aria-label')).toBe('Sharp')
   })
 })

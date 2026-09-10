@@ -3,9 +3,11 @@ import { persist } from 'zustand/middleware'
 import { addEdge, applyEdgeChanges, applyNodeChanges } from '@xyflow/react'
 import type { Connection, EdgeChange, NodeChange, XYPosition } from '@xyflow/react'
 import { BLOCK_TYPES } from '../config/blockTypes'
+import { DEFAULT_EDGE_SHAPE } from '../config/edgeShapes'
 import type {
   BlockKind,
   Chart,
+  EdgeShape,
   FundNode,
   FundNodeData,
   MoneyEdge,
@@ -24,6 +26,7 @@ type FlowState = {
   updateEdgeAmount: (id: string, amount: number | null) => void
   updateEdgeData: (id: string, patch: Partial<MoneyEdgeData>) => void
   setEdgeColor: (ids: string[], color: string | null) => void
+  setEdgeShape: (ids: string[], shape: EdgeShape) => void
   newChart: (name?: string) => void
   renameChart: (name: string) => void
   switchChart: (id: string) => void
@@ -33,6 +36,21 @@ type FlowState = {
 
 // Enough for the copy to read as one, while still overlapping its original.
 const DUPLICATE_OFFSET = 36
+
+// One pass rather than a call per edge, so restyling a whole selection is a
+// single store write. A key patched to undefined is dropped rather than stored,
+// so a line back on its default leaves nothing behind in exported JSON.
+const restyled = (edges: MoneyEdge[], ids: string[], patch: Partial<MoneyEdgeData>) => {
+  const wanted = new Set(ids)
+  return edges.map((e) => {
+    if (!wanted.has(e.id)) return e
+    const data: MoneyEdgeData = { amount: null, ...e.data, ...patch }
+    for (const [key, value] of Object.entries(patch)) {
+      if (value === undefined) delete (data as Record<string, unknown>)[key]
+    }
+    return { ...e, data }
+  })
+}
 
 const makeChart = (name: string): Chart => ({
   id: crypto.randomUUID(),
@@ -122,20 +140,15 @@ export const useFlowStore = create<FlowState>()(
             ),
           })),
 
-        // One pass rather than a call per edge, so recolouring a whole
-        // selection is a single store write.
         setEdgeColor: (ids, color) =>
-          patchActive((c) => {
-            const wanted = new Set(ids)
-            return {
-              edges: c.edges.map((e) => {
-                if (!wanted.has(e.id)) return e
-                // Dropped rather than set to undefined, so a reset leaves no key behind in exported JSON.
-                const { color: _cleared, ...rest } = e.data ?? { amount: null }
-                return { ...e, data: color == null ? rest : { ...rest, color } }
-              }),
-            }
-          }),
+          patchActive((c) => ({ edges: restyled(c.edges, ids, { color: color ?? undefined }) })),
+
+        setEdgeShape: (ids, shape) =>
+          patchActive((c) => ({
+            edges: restyled(c.edges, ids, {
+              shape: shape === DEFAULT_EDGE_SHAPE ? undefined : shape,
+            }),
+          })),
 
         newChart: (name) => {
           const chart = makeChart(name ?? `Money map ${get().charts.length + 1}`)

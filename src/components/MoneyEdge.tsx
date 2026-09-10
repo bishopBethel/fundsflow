@@ -1,5 +1,5 @@
 import { Fragment, memo, useEffect, useRef, useState } from 'react'
-import { BaseEdge, EdgeLabelRenderer, getBezierPath } from '@xyflow/react'
+import { BaseEdge, EdgeLabelRenderer, getBezierPath, getSmoothStepPath } from '@xyflow/react'
 import type { EdgeProps } from '@xyflow/react'
 import {
   FUNDING_DURATIONS,
@@ -8,7 +8,7 @@ import {
   SPENDING_ROUTES,
   SPENDING_USES,
 } from '../config/fundingTypes'
-import { drawableAmount, edgeVisuals, maxEdgeAmount } from '../lib/edgeStyle'
+import { drawableAmount, edgeShape, edgeVisuals, maxEdgeAmount } from '../lib/edgeStyle'
 import { edgeTags } from '../lib/edgeTags'
 import { formatMoney } from '../lib/format'
 import { useFlowStore } from '../store/useFlowStore'
@@ -77,14 +77,12 @@ export const MoneyEdge = memo(
     data,
     selected,
   }: EdgeProps<MoneyEdgeType>) => {
-    const [edgePath, labelX, labelY] = getBezierPath({
-      sourceX,
-      sourceY,
-      targetX,
-      targetY,
-      sourcePosition,
-      targetPosition,
-    })
+    const ends = { sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition }
+    // A zero radius is what makes the step path square rather than rounded.
+    const [edgePath, labelX, labelY] =
+      edgeShape(data?.shape) === 'sharp'
+        ? getSmoothStepPath({ ...ends, borderRadius: 0 })
+        : getBezierPath(ends)
     const [editing, setEditing] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
     const labelRef = useRef<HTMLDivElement>(null)
