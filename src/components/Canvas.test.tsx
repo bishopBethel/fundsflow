@@ -3,7 +3,7 @@ import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import type { Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { FundNode, MoneyEdge } from '../types'
+import type { EdgeShape, FundNode, MoneyEdge } from '../types'
 
 vi.mock('@xyflow/react', () => ({
   Background: () => null,
@@ -47,17 +47,24 @@ let root: Root
 const q = (sel: string) => container.querySelector<HTMLElement>(sel)
 const swatch = (name: string) =>
   container.querySelector<HTMLElement>(`[role=radio][aria-label="${name}"]`)!
+const shape = (name: string) =>
+  container.querySelector<HTMLElement>(`.edge-shapes [role=radio][aria-label="${name}"]`)!
 
 const seed = (edges: MoneyEdge[]) =>
   act(() => useFlowStore.getState().loadChartData('test map', nodes, edges))
 
-const edge = (id: string, selected: boolean, color?: string): MoneyEdge => ({
+const edge = (
+  id: string,
+  selected: boolean,
+  color?: string,
+  shape?: EdgeShape,
+): MoneyEdge => ({
   id,
   type: 'money',
   source: 'a',
   target: 'b',
   selected,
-  data: { amount: 100, color },
+  data: { amount: 100, color, shape },
 })
 
 const activeEdges = () => {
@@ -116,7 +123,7 @@ describe('the colour bar on the canvas', () => {
     root = createRoot(container)
     seed([edge('e1', true, '#16a34a'), edge('e2', true, '#e11d48')])
     mount()
-    expect(container.querySelectorAll('[aria-checked=true]')).toHaveLength(0)
+    expect(container.querySelectorAll('.edge-color-swatches [aria-checked=true]')).toHaveLength(0)
   })
 
   it('sends a line back to its block colour on reset', () => {
@@ -124,5 +131,28 @@ describe('the colour bar on the canvas', () => {
     mount()
     act(() => q('.edge-color-reset')!.dispatchEvent(new MouseEvent('click', { bubbles: true })))
     expect(activeEdges()[0].data?.color).toBeUndefined()
+  })
+
+  it('squares every selected line, and curves it again, leaving the unselected one alone', () => {
+    seed([edge('e1', true), edge('e2', true), edge('e3', false)])
+    mount()
+
+    act(() => shape('Sharp').dispatchEvent(new MouseEvent('click', { bubbles: true })))
+    expect(activeEdges().map((e) => e.data?.shape)).toEqual(['sharp', 'sharp', undefined])
+
+    act(() => shape('Curved').dispatchEvent(new MouseEvent('click', { bubbles: true })))
+    expect(activeEdges().map((e) => e.data?.shape)).toEqual([undefined, undefined, undefined])
+  })
+
+  it('checks the shape the selected lines share, and neither when they differ', () => {
+    seed([edge('e1', true, undefined, 'sharp'), edge('e2', true, undefined, 'sharp')])
+    mount()
+    expect(shape('Sharp').getAttribute('aria-checked')).toBe('true')
+
+    act(() => root.unmount())
+    root = createRoot(container)
+    seed([edge('e1', true, undefined, 'sharp'), edge('e2', true)])
+    mount()
+    expect(container.querySelectorAll('.edge-shapes [aria-checked=true]')).toHaveLength(0)
   })
 })

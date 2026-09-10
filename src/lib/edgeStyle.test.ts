@@ -2,19 +2,27 @@
 import { describe, expect, it } from 'vitest'
 import { BLOCK_TYPES } from '../config/blockTypes'
 import { EDGE_COLORS } from '../config/edgeColors'
-import { SKETCH_COLOR, edgeTint, edgeVisuals, readableInk, sharedTint } from './edgeStyle'
-import type { FundNode, MoneyEdge } from '../types'
+import {
+  SKETCH_COLOR,
+  edgeShape,
+  edgeTint,
+  edgeVisuals,
+  readableInk,
+  sharedShape,
+  sharedTint,
+} from './edgeStyle'
+import type { EdgeShape, FundNode, MoneyEdge } from '../types'
 
 const nodes: FundNode[] = [
   { id: 'a', type: 'fund', position: { x: 0, y: 0 }, data: { kind: 'federal', label: 'Agency' } },
 ]
 
-const edge = (id: string, color?: string): MoneyEdge => ({
+const edge = (id: string, color?: string, shape?: string): MoneyEdge => ({
   id,
   type: 'money',
   source: 'a',
   target: 'b',
-  data: { amount: 100, color },
+  data: { amount: 100, color, shape: shape as EdgeShape | undefined },
 })
 
 describe('the colour a line is drawn in', () => {
@@ -63,6 +71,32 @@ describe('the colour a selection shares', () => {
   it('reports nothing for lines that were never recoloured, so no swatch looks picked', () => {
     expect(sharedTint([edge('e1'), edge('e2')])).toBeNull()
     expect(sharedTint([])).toBeNull()
+  })
+})
+
+describe('the shape a line is drawn in', () => {
+  it('draws a curve unless the line asked for corners', () => {
+    expect(edgeShape(undefined)).toBe('curved')
+    expect(edgeShape('curved')).toBe('curved')
+    expect(edgeShape('sharp')).toBe('sharp')
+  })
+
+  it('ignores a shape an imported file made up', () => {
+    for (const bad of ['wavy', '', 'SHARP', 'straight']) expect(edgeShape(bad), bad).toBe('curved')
+  })
+})
+
+describe('the shape a selection shares', () => {
+  it('reports the shape only when every selected line agrees', () => {
+    expect(sharedShape([edge('e1', undefined, 'sharp'), edge('e2', undefined, 'sharp')])).toBe(
+      'sharp',
+    )
+    expect(sharedShape([edge('e1', undefined, 'sharp'), edge('e2')])).toBeNull()
+  })
+
+  it('reads untouched lines as curved, which is what they are drawn as', () => {
+    expect(sharedShape([edge('e1'), edge('e2')])).toBe('curved')
+    expect(sharedShape([])).toBe('curved')
   })
 })
 

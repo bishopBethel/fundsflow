@@ -1,5 +1,6 @@
 import { BLOCK_TYPES } from '../config/blockTypes'
-import type { BlockKind, FundNode, MoneyEdge, MoneyEdgeData } from '../types'
+import { DEFAULT_EDGE_SHAPE, EDGE_SHAPES } from '../config/edgeShapes'
+import type { BlockKind, EdgeShape, FundNode, MoneyEdge, MoneyEdgeData } from '../types'
 
 export const SKETCH_COLOR = '#94a3b8'
 
@@ -19,6 +20,10 @@ export const drawableAmount = (amount: number | null | undefined) =>
 const HEX = /^#[0-9a-f]{6}$/i
 
 export const edgeTint = (color: string | undefined) => (color && HEX.test(color) ? color : null)
+
+// Same gate for the shape: anything the file made up falls back to a curve.
+export const edgeShape = (shape: string | undefined): EdgeShape =>
+  EDGE_SHAPES.some((s) => s.id === shape) ? (shape as EdgeShape) : DEFAULT_EDGE_SHAPE
 
 // The stylesheet's two --ink values: a filled chip gets whichever survives on it.
 const CHIP_INK = { dark: '#18181b', light: '#fafafa' }
@@ -44,6 +49,12 @@ export function readableInk(color: string) {
 export function sharedTint(edges: MoneyEdge[]) {
   const first = edgeTint(edges[0]?.data?.color)
   return edges.every((e) => edgeTint(e.data?.color) === first) ? first : null
+}
+
+// Null when the edges disagree, so a mixed selection checks neither shape.
+export function sharedShape(edges: MoneyEdge[]) {
+  const first = edgeShape(edges[0]?.data?.shape)
+  return edges.every((e) => edgeShape(e.data?.shape) === first) ? first : null
 }
 
 export function maxEdgeAmount(edges: MoneyEdge[]) {

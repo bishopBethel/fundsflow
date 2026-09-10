@@ -161,4 +161,32 @@ describe('recolouring lines', () => {
     expect(seededEdge().data).toEqual({ amount: 100_000, fundingType: 'formula' })
     expect(Object.keys(seededEdge().data!)).not.toContain('color')
   })
+
+  it('squares a whole selection at once, and leaves the rest curved', () => {
+    seedPair({ amount: 100 }, { amount: 200 })
+    useFlowStore.getState().setEdgeShape(['e1'], 'sharp')
+    expect(edgeById('e1').data?.shape).toBe('sharp')
+    expect(edgeById('e2').data?.shape).toBeUndefined()
+
+    useFlowStore.getState().setEdgeShape(['e1', 'e2'], 'sharp')
+    expect([edgeById('e1').data?.shape, edgeById('e2').data?.shape]).toEqual(['sharp', 'sharp'])
+  })
+
+  it('keeps the colour, the amount and the tags when the shape changes', () => {
+    seed({ amount: 100_000, fundingType: 'formula', color: '#16a34a' })
+    useFlowStore.getState().setEdgeShape(['e1'], 'sharp')
+    expect(seededEdge().data).toEqual({
+      amount: 100_000,
+      fundingType: 'formula',
+      color: '#16a34a',
+      shape: 'sharp',
+    })
+  })
+
+  it('drops the shape key back on curved, the shape a line is drawn in by default', () => {
+    seed({ amount: 100_000, shape: 'sharp' })
+    useFlowStore.getState().setEdgeShape(['e1'], 'curved')
+    expect(seededEdge().data).toEqual({ amount: 100_000 })
+    expect(Object.keys(seededEdge().data!)).not.toContain('shape')
+  })
 })
