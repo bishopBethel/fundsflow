@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronRight, Search, X } from 'lucide-react'
+import { ChevronRight, PanelLeftClose, PanelLeftOpen, Search, X } from 'lucide-react'
 import { BLOCK_TYPES } from '../config/blockTypes'
 import { countBlocks, filterPalette, searchTerms } from '../lib/blockSearch'
 import type { BlockKind } from '../types'
@@ -17,6 +17,7 @@ const panelId = (title: string) =>
 
 export function Palette() {
   const [query, setQuery] = useState('')
+  const [collapsed, setCollapsed] = useState(false)
   const [opened, setOpened] = useState<Set<string>>(new Set())
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLElement>(null)
@@ -47,11 +48,39 @@ export function Palette() {
     inputRef.current?.focus()
   }
 
+  if (collapsed)
+    return (
+      <aside className="palette palette-rail">
+        <button
+          className="palette-toggle"
+          type="button"
+          aria-label="Show building blocks"
+          aria-expanded={false}
+          title="Show building blocks"
+          onClick={() => setCollapsed(false)}
+        >
+          <PanelLeftOpen size={16} strokeWidth={1.75} aria-hidden="true" />
+        </button>
+      </aside>
+    )
+
   return (
     <aside className="palette" ref={listRef}>
       <div className="palette-intro">
-        <strong>Building blocks</strong>
-        <span>Drag one onto the canvas →</span>
+        <div className="palette-intro-text">
+          <strong>Building blocks</strong>
+          <span>Drag one onto the canvas →</span>
+        </div>
+        <button
+          className="palette-toggle"
+          type="button"
+          aria-label="Hide building blocks"
+          aria-expanded={true}
+          title="Hide building blocks"
+          onClick={() => setCollapsed(true)}
+        >
+          <PanelLeftClose size={16} strokeWidth={1.75} aria-hidden="true" />
+        </button>
       </div>
 
       <div className="palette-search">

@@ -30,6 +30,11 @@ describe('palette search chrome', () => {
     expect(markup).toMatch(/class="palette-empty" role="status">\s*<\/p>/)
   })
 
+  it('offers a way to put the sidebar away, open to start with', () => {
+    expect(markup).toContain('aria-label="Hide building blocks"')
+    expect(markup).not.toContain('palette-rail')
+  })
+
   it('stops the mobile keyboard rewriting an acronym the catalog spells exactly', () => {
     expect(markup).toMatch(/autocorrect="off"/i)
     expect(markup).toMatch(/autocapitalize="none"/i)
