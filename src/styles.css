@@ -154,12 +154,12 @@ body,
 .chart-switcher {
   font: inherit;
   font-size: 13px;
-  padding: 6px 9px;
+  padding: 6px 28px 6px 9px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--panel);
   color: var(--ink-soft);
-  max-width: 180px;
+  max-width: 260px;
 }
 
 .toolbar-actions {
@@ -209,17 +209,59 @@ body,
   width: 230px;
   flex-shrink: 0;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: stable both-edges;
   background: var(--panel);
   border-right: 1px solid var(--line);
-  padding: 14px;
+  padding: 14px 4px;
+}
+
+/* The rail keeps the reopen button reachable once the block list is put away. */
+.palette-rail {
+  width: 44px;
+  padding: 10px 0;
+  scrollbar-gutter: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.palette-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 5px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.palette-toggle:hover {
+  background: var(--btn-hover-bg);
+  border-color: var(--line);
+  color: var(--ink);
 }
 
 .palette-intro {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.palette-intro .palette-toggle {
+  margin-right: -6px;
+}
+
+.palette-intro-text {
+  display: flex;
   flex-direction: column;
   gap: 2px;
-  margin-bottom: 12px;
+  min-width: 0;
 }
 
 .palette-intro strong {
@@ -237,8 +279,8 @@ body,
   position: sticky;
   top: 0;
   z-index: 2;
-  margin: 0 -14px;
-  padding: 2px 14px 12px;
+  margin: 0 -4px;
+  padding: 2px 4px 12px;
   background: var(--panel);
 }
 
