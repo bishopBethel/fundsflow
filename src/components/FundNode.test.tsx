@@ -1,9 +1,9 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 import type { NodeProps } from '@xyflow/react'
-import { PALETTE_GROUPS } from '../config/blockTypes'
+import { BLOCK_TYPES } from '../config/blockTypes'
 import { computeBudgets } from '../lib/budget'
-import type { FundNode as FundNodeType, FundNodeData } from '../types'
+import type { BlockKind, FundNode as FundNodeType, FundNodeData } from '../types'
 import { FlowViewContext } from './FlowView'
 
 vi.mock('@xyflow/react', () => ({
@@ -13,7 +13,7 @@ vi.mock('@xyflow/react', () => ({
 
 const { FundNode } = await import('./FundNode')
 
-const render = (data: FundNodeData, readOnly: boolean) => {
+const render = (data: FundNodeData, readOnly = false) => {
   const node = { id: 'n', type: 'fund' as const, position: { x: 0, y: 0 }, data }
   return renderToStaticMarkup(
     <FlowViewContext.Provider
@@ -24,29 +24,24 @@ const render = (data: FundNodeData, readOnly: boolean) => {
   )
 }
 
-const everyKind = PALETTE_GROUPS.flatMap((g) => g.kinds)
+const kindsWhere = (test: (role: string) => boolean) =>
+  (Object.keys(BLOCK_TYPES) as BlockKind[]).filter((k) => test(BLOCK_TYPES[k].role))
 
 describe('the starting pot', () => {
-  it('is on every block, wherever money starts, moves or lands', () => {
-    for (const kind of everyKind) {
-      const markup = render({ kind, label: 'Block' }, false)
-      expect(markup, kind).toContain('Starting pot')
-      expect(markup, kind).toContain('<input')
+  it('is on the blocks money starts at and the blocks it moves through', () => {
+    for (const kind of kindsWhere((r) => r !== 'recipient')) {
+      expect(render({ kind, label: 'Block' }), kind).toContain('Starting pot')
     }
   })
 
-  it('counts towards what a landing block has available', () => {
-    const node = {
-      id: 'n',
-      type: 'fund' as const,
-      position: { x: 0, y: 0 },
-      data: { kind: 'household' as const, label: 'Family', pot: 500 },
+  it('is off the blocks money lands in, which only ever receive along an arrow', () => {
+    for (const kind of kindsWhere((r) => r === 'recipient')) {
+      expect(render({ kind, label: 'Block' }), kind).not.toContain('Starting pot')
     }
-    expect(computeBudgets([node], []).get('n')!.available).toBe(500)
   })
 
-  it('stays out of a read-only preview until a block actually has one', () => {
-    expect(render({ kind: 'ngo', label: 'Nonprofit' }, true)).not.toContain('Starting pot')
-    expect(render({ kind: 'ngo', label: 'Nonprofit', pot: 250 }, true)).toContain('Starting pot')
+  it('is editable on the canvas and static in a preview', () => {
+    expect(render({ kind: 'federal', label: 'Agency' })).toContain('<input')
+    expect(render({ kind: 'federal', label: 'Agency' }, true)).not.toContain('<input')
   })
 })

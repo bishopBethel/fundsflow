@@ -40,9 +40,9 @@ Then open http://localhost:5173.
   ride along on the arrow.
 - **Budget tracking**: every block shows money in, money out, and what's left.
   Send out more than a block has and it gets a friendly 😬 Over budget! badge.
-- **Every block** gets a "Starting pot" you can type an amount into — money that
-  starts there rather than arriving along an arrow. Leave it blank for blocks
-  that only pass money on.
+- **Sources** and the blocks that **move money** get a "Starting pot" you can
+  type an amount into. Blocks where money lands don't — their money arrives
+  along an arrow.
 - **A running total** sits along the bottom: starting money, money moving
   between blocks, money still sitting in blocks, and how many blocks are over
   budget.

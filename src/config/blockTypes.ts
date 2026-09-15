@@ -302,7 +302,7 @@ export const blockFor = (kind: BlockKind): BlockType =>
 export const PALETTE_GROUPS: { title: string; hint: string; kinds: BlockKind[] }[] = [
   {
     title: 'Where money starts',
-    hint: 'Where the journey begins',
+    hint: 'Give these a starting pot',
     kinds: [
       'taxpayers',
       'congress',
