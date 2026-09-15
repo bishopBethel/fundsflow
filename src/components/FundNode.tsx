@@ -42,22 +42,23 @@ export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) =
         </div>
       </div>
 
-      {block.role === 'source' &&
-        (readOnly ? (
+      {readOnly ? (
+        data.pot != null && (
           <div className="fund-node-pot">
             <span>Starting pot</span>
-            <span className="fund-node-pot-value">{formatMoney(data.pot ?? 0)}</span>
+            <span className="fund-node-pot-value">{formatMoney(data.pot)}</span>
           </div>
-        ) : (
-          <label className="fund-node-pot">
-            <span>Starting pot</span>
-            <MoneyInput
-              value={data.pot ?? null}
-              placeholder="$0"
-              onCommit={(v) => updateNodeData(id, { pot: v ?? undefined })}
-            />
-          </label>
-        ))}
+        )
+      ) : (
+        <label className="fund-node-pot">
+          <span>Starting pot</span>
+          <MoneyInput
+            value={data.pot ?? null}
+            placeholder="$0"
+            onCommit={(v) => updateNodeData(id, { pot: v ?? undefined })}
+          />
+        </label>
+      )}
 
       {budget && (
         <div className="fund-node-chips">
