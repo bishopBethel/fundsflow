@@ -39,7 +39,7 @@ Then open http://localhost:5173.
   whether it reaches people directly or passes through someone else. The tags
   ride along on the arrow.
 - **Budget tracking**: every block shows money in, money out, and what's left.
-  Send out more than a block has and it gets a friendly 😬 Over budget! badge.
+  Send out more than a block has and a little robot pops up from behind it, looks it over, pulls a sad face, and asks for extra funds.
 - **Sources** and the blocks that **move money** get a "Starting pot" you can
   type an amount into. Blocks where money lands don't — their money arrives
   along an arrow.

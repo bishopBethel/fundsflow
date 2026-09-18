@@ -1,13 +1,13 @@
 import { memo } from 'react'
 import { Handle, Position } from '@xyflow/react'
 import type { NodeProps } from '@xyflow/react'
-import { TriangleAlert } from 'lucide-react'
 import { blockFor } from '../config/blockTypes'
 import { formatMoney } from '../lib/format'
 import { useFlowStore } from '../store/useFlowStore'
 import type { FundNode as FundNodeType } from '../types'
 import { useBudget, useFlowView } from './FlowView'
 import { MoneyInput } from './MoneyInput'
+import { OverBudgetBot } from './OverBudgetBot'
 
 export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) => {
   const block = blockFor(data.kind)
@@ -73,12 +73,7 @@ export const FundNode = memo(({ id, data, selected }: NodeProps<FundNodeType>) =
         </div>
       )}
 
-      {over && (
-        <div className="fund-node-warn">
-          <TriangleAlert size={13} strokeWidth={2} aria-hidden="true" />
-          Over budget
-        </div>
-      )}
+      {over && <OverBudgetBot />}
     </div>
   )
 })
